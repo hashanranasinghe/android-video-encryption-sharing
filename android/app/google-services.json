@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "815320096395",
+    "project_id": "video-encryption-sharing",
+    "storage_bucket": "video-encryption-sharing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:815320096395:android:d98a81d58a902dce1cfe8e",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "815320096395-4ma1sijqo3eu95u93l270l7nodjdenbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHQuvHPr4b5nLB6v5cLd_FPHmVmk1ira8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "815320096395-4ma1sijqo3eu95u93l270l7nodjdenbj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
