@@ -1,11 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:app/widgets/drawer_widget.dart';
 import 'package:app/widgets/topscreen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../api/firebaseapi.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -16,10 +19,14 @@ class UploadScreen extends StatefulWidget {
 }
 
 class _UploadScreenState extends State<UploadScreen> {
+
+  bool _isGranted = true;
   UploadTask? task;
   File? file;
+  Uint8List? bytes;
   String? _videoName;
   String? _description;
+  var Result;
   final _form = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -30,7 +37,7 @@ class _UploadScreenState extends State<UploadScreen> {
   @override
   Widget build(BuildContext context) {
    final fileName = file!= null ? basename(file!.path) : 'No File Selected';
-
+    requestStoragePermission();
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
@@ -118,6 +125,9 @@ class _UploadScreenState extends State<UploadScreen> {
                           backgroundColor: MaterialStateProperty.all(
                               const Color(0xff102248)))),
                   SizedBox(height: 20),
+
+
+
                   task != null ? buildUploadStatus(task!) : Container(),
 
                 ],
@@ -173,34 +183,77 @@ class _UploadScreenState extends State<UploadScreen> {
     );
   }
 
+  Future<Directory?> get getAppDir async{
+    final appDocDir = await getExternalStorageDirectory();
+    return appDocDir;
+  }
+
+  Future<Directory> get getExternalVisibleDir async{
+    if(await Directory('/storage/emulated/0/SecureVideoFolder').exists()){
+      final externalDir = Directory('/storage/emulated/0/SecureVideoFolder');
+      return externalDir;
+    }else{
+      await Directory('/storage/emulated/0/SecureVideoFolder')
+          .create(recursive: true);
+      final externalDir = Directory('/storage/emulated/0/SecureVideoFolder');
+      return externalDir;
+    }
+  }
+
+  requestStoragePermission() async{
+    if(!await Permission.storage.isGranted){
+      PermissionStatus result = await Permission.storage.request();
+      if(result.isGranted){
+        setState(() {
+          _isGranted = true;
+        });
+      }else{
+        _isGranted = false;
+      }
+    }
+  }
+
 
   Future selectFile() async {
     final result = await FilePicker.platform.pickFiles(allowMultiple: false);
 
     if (result == null) return;
-    final path = result.files.single.path!;
 
+    final path = result.files.single.path!;
     setState(() => file = File(path));
+    final p = result.files.first.bytes;
+    setState(() {
+      bytes = p;
+    });
   }
 
   Future uploadFile() async {
     if (file == null) return;
-
     final fileName = basename(file!.path);
-    final destination = 'files/$fileName';
 
-    task = FirebaseApi.uploadFile(destination, file!);
-    setState(() {});
+    final destination = 'files/$fileName.aes';
+    await file!.readAsBytes().then(
+            (value) => bytes = Uint8List.fromList(value));
+
+    task = FirebaseApi.uploadBytes(destination,bytes!);
+    //task = FirebaseApi.uploadFile(destination, file!);
+
 
     if (task == null) return;
 
-    final snapshot = await task!.whenComplete(() {});
+    final snapshot = await task!.whenComplete(() {
+            return Fluttertoast.showToast(
+              msg: "Complete",
+              toastLength: Toast.LENGTH_LONG
+            );
+          });
     final urlDownload = await snapshot.ref.getDownloadURL();
 
     print('Download-Link: $urlDownload');
   }
 
   Widget buildUploadStatus(UploadTask task) => StreamBuilder<TaskSnapshot>(
+
     stream: task.snapshotEvents,
     builder: (context, snapshot) {
       if (snapshot.hasData) {
@@ -214,8 +267,12 @@ class _UploadScreenState extends State<UploadScreen> {
         );
       } else {
         return Container();
+
       }
+
     },
+
   );
 
 }
+
