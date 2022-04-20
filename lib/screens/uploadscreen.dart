@@ -13,6 +13,7 @@ import '../api/firebaseapi.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({Key? key}) : super(key: key);
+  static const routeName = 'UploadScreen screen';
 
   @override
   State<UploadScreen> createState() => _UploadScreenState();
@@ -34,6 +35,7 @@ class _UploadScreenState extends State<UploadScreen> {
 
   TextEditingController videoNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
    final fileName = file!= null ? basename(file!.path) : 'No File Selected';
@@ -125,9 +127,6 @@ class _UploadScreenState extends State<UploadScreen> {
                           backgroundColor: MaterialStateProperty.all(
                               const Color(0xff102248)))),
                   SizedBox(height: 20),
-
-
-
                   task != null ? buildUploadStatus(task!) : Container(),
 
                 ],
@@ -136,6 +135,8 @@ class _UploadScreenState extends State<UploadScreen> {
       ),
     );
   }
+
+  //video name
   Widget _buildVideoName() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
@@ -161,7 +162,7 @@ class _UploadScreenState extends State<UploadScreen> {
     );
   }
 
-
+  //description
   Widget _buildDescription() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
@@ -183,26 +184,28 @@ class _UploadScreenState extends State<UploadScreen> {
     );
   }
 
-  Future<Directory?> get getAppDir async{
-    final appDocDir = await getExternalStorageDirectory();
-    return appDocDir;
-  }
-
-  Future<Directory> get getExternalVisibleDir async{
-    if(await Directory('/storage/emulated/0/SecureVideoFolder').exists()){
-      final externalDir = Directory('/storage/emulated/0/SecureVideoFolder');
-      return externalDir;
-    }else{
-      await Directory('/storage/emulated/0/SecureVideoFolder')
-          .create(recursive: true);
-      final externalDir = Directory('/storage/emulated/0/SecureVideoFolder');
-      return externalDir;
-    }
-  }
-
+  //requesting storage permission
   requestStoragePermission() async{
-    if(!await Permission.storage.isGranted){
+    if(!(await Permission.storage.isGranted)){
       PermissionStatus result = await Permission.storage.request();
+      if(result.isGranted){
+        setState(() {
+          _isGranted = true;
+        });
+      }else{
+        _isGranted = false;
+      }
+    }else if(!(await Permission.accessMediaLocation.isGranted)){
+      PermissionStatus result = await Permission.accessMediaLocation.request();
+      if(result.isGranted){
+        setState(() {
+          _isGranted = true;
+        });
+      }else{
+        _isGranted = false;
+      }
+    }else if(!(await Permission.manageExternalStorage.isGranted)){
+      PermissionStatus result = await Permission.manageExternalStorage.request();
       if(result.isGranted){
         setState(() {
           _isGranted = true;
@@ -213,7 +216,7 @@ class _UploadScreenState extends State<UploadScreen> {
     }
   }
 
-
+  //selecting video
   Future selectFile() async {
     final result = await FilePicker.platform.pickFiles(allowMultiple: false);
 
@@ -227,6 +230,7 @@ class _UploadScreenState extends State<UploadScreen> {
     });
   }
 
+  //upload the video
   Future uploadFile() async {
     if (file == null) return;
     final fileName = basename(file!.path);
@@ -237,7 +241,6 @@ class _UploadScreenState extends State<UploadScreen> {
 
     task = FirebaseApi.uploadBytes(destination,bytes!);
     //task = FirebaseApi.uploadFile(destination, file!);
-
 
     if (task == null) return;
 
@@ -252,6 +255,7 @@ class _UploadScreenState extends State<UploadScreen> {
     print('Download-Link: $urlDownload');
   }
 
+  //uploading percentage it's not work
   Widget buildUploadStatus(UploadTask task) => StreamBuilder<TaskSnapshot>(
 
     stream: task.snapshotEvents,
@@ -269,9 +273,7 @@ class _UploadScreenState extends State<UploadScreen> {
         return Container();
 
       }
-
     },
-
   );
 
 }

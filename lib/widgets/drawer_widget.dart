@@ -1,3 +1,5 @@
+import 'package:app/screens/uploadscreen.dart';
+import 'package:app/screens/videolistscreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,6 +31,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             children: <Widget>[
               ListTile(
                 onTap: () {
+                  Navigator.of(context)
+                      .pushReplacementNamed(UploadScreen.routeName);
+
 
                 },
                 leading: const Icon(
@@ -51,7 +56,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               // ignore: prefer_const_constructors
               ListTile(
                 onTap: () {
-
+                  Navigator.of(context)
+                      .pushReplacementNamed(VideoListScreen.routeName);
                 },
                 leading: const Icon(
                   Icons.video_collection_outlined,
