@@ -1,5 +1,6 @@
 import 'package:app/screens/loginscreen.dart';
 import 'package:app/screens/signupscreen.dart';
+import 'package:app/screens/splashscreen.dart';
 import 'package:app/screens/uploadscreen.dart';
 import 'package:app/screens/videolistscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -25,8 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
-      home: const UploadScreen(),
+      home: const SplashScreen(),
       routes: {
+        SplashScreen.routName: (ctx) => const SplashScreen(),
         SignupScreen.routeName: (ctx) => const SignupScreen(),
         LoginScreen.routeName: (ctx) => const LoginScreen(),
         VideoListScreen.routeName: (ctx) => const VideoListScreen(),

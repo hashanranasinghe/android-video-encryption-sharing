@@ -1,7 +1,9 @@
+import 'package:app/screens/loginscreen.dart';
 import 'package:app/screens/uploadscreen.dart';
 import 'package:app/screens/videolistscreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerWidget extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -117,7 +119,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
 
               ListTile(
-                onTap: () {
+                onTap: () async{
+                  final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                  sharedPreferences.remove('email');
+                  Navigator.of(context)
+                      .pushReplacementNamed(LoginScreen.routeName);
+
+
+
+
                 },
                 leading: const Icon(Icons.logout_outlined,
                     color: Colors.black),

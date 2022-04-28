@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:app/models/create_account.dart';
+import 'package:app/models/upload_video.dart';
 import 'package:app/widgets/drawer_widget.dart';
 import 'package:app/widgets/topscreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,6 +34,7 @@ class _UploadScreenState extends State<UploadScreen> {
   var Result;
   final _form = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _auth = FirebaseAuth.instance;
 
 
 
@@ -150,11 +155,6 @@ class _UploadScreenState extends State<UploadScreen> {
             hintText: "Enter the video name",
             border:
             OutlineInputBorder(borderRadius: BorderRadius.circular(30))),
-        validator: (String? value) {
-          if (value!.isEmpty) {
-            return 'Username can\'t be null';
-          }
-        },
         onSaved: (String? value) {
           _videoName = value;
         },
@@ -232,6 +232,8 @@ class _UploadScreenState extends State<UploadScreen> {
 
   //upload the video
   Future uploadFile() async {
+
+
     if (file == null) return;
     final fileName = basename(file!.path);
 
@@ -240,6 +242,7 @@ class _UploadScreenState extends State<UploadScreen> {
             (value) => bytes = Uint8List.fromList(value));
 
     task = FirebaseApi.uploadBytes(destination,bytes!);
+
     //task = FirebaseApi.uploadFile(destination, file!);
 
     if (task == null) return;
@@ -251,8 +254,35 @@ class _UploadScreenState extends State<UploadScreen> {
             );
           });
     final urlDownload = await snapshot.ref.getDownloadURL();
+    CreateAccDetails createAccDetails = CreateAccDetails();
+
+
+
+
+
+    User? user = _auth.currentUser;
+    print(user!.uid);
+    await sendVideo(user.uid, urlDownload);
+
+    Fluttertoast.showToast(msg: "uploaded successfully.");
+
 
     print('Download-Link: $urlDownload');
+  }
+
+  Future<String> sendVideo(id ,urlDownload) async{
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    CollectionReference users = firebaseFirestore.collection('users');
+    UploadVideo uploadVideo = UploadVideo();
+
+    //writing all values
+    uploadVideo.videoName = videoNameController.text;
+    uploadVideo.videoDes = descriptionController.text;
+    uploadVideo.videoUrl = urlDownload;
+    uploadVideo.uid = id;
+
+    users.doc(id).collection('upload').add(uploadVideo.toMap());
+    return "success";
   }
 
   //uploading percentage it's not work

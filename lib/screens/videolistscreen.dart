@@ -1,6 +1,10 @@
 import 'dart:io';
 
 import 'package:app/models/firebasefile.dart';
+import 'package:app/models/upload_video.dart';
+import 'package:app/widgets/video_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -19,6 +23,16 @@ class VideoListScreen extends StatefulWidget {
 class _VideoListScreenState extends State<VideoListScreen> {
   late Future<List<FirebaseFile>> futureFiles;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _auth = FirebaseAuth.instance;
+  List<Object> _videoList = [];
+  late final UploadVideo _uploadVideo;
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    getUsersVideoList();
+  }
 
 
   @override
@@ -48,6 +62,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
               } else {
                 final files = snapshot.data!;
 
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -57,15 +72,19 @@ class _VideoListScreenState extends State<VideoListScreen> {
                           height: 50,
                           width: 50,
                         )),
-                    buildHeader(files.length),
+                    // buildHeader(files.length),
+                    buildHeader(_videoList.length),
                     const SizedBox(height: 12),
                     Expanded(
                       child: ListView.builder(
-                        itemCount: files.length,
+                        // itemCount: files.length,
+                        itemCount: _videoList.length,
                         itemBuilder: (context, index) {
                           final file = files[index];
+                          //final file = _videoList[index];
 
-                          return buildFile(context, file);
+                          // return buildFile(context, _videoList. );
+                          return VideoCard(_videoList[index] as UploadVideo);
                         },
                       ),
                     ),
@@ -77,6 +96,32 @@ class _VideoListScreenState extends State<VideoListScreen> {
       ),
     );
   }
+  // Widget buildFile(BuildContext context, FirebaseFile file) => ListTile(
+  //   title: Text(
+  //     file.name,
+  //     style: TextStyle(
+  //       fontWeight: FontWeight.bold,
+  //       decoration: TextDecoration.underline,
+  //       color: Colors.blue,
+  //     ),
+  //   ),
+  //   trailing: Row(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       IconButton(onPressed: () async {
+  //         Directory d = await getExternalVisibleDir;
+  //         //await FirebaseApi.downloadFile(file.ref);
+  //         await FirebaseApi.getNormalFile(d,file.url,file.name);
+  //
+  //         final snackBar = SnackBar(
+  //           content: Text('Downloaded ${file.name}'),
+  //         );
+  //         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  //       }, icon: const Icon(Icons.download_rounded)),
+  //     ],
+  //   ),
+  // );
+
   Widget buildFile(BuildContext context, FirebaseFile file) => ListTile(
     title: Text(
       file.name,
@@ -92,7 +137,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
         IconButton(onPressed: () async {
           Directory d = await getExternalVisibleDir;
           //await FirebaseApi.downloadFile(file.ref);
-          await FirebaseApi.getNormalFile(d,file.url,file.name);
+          // await FirebaseApi.getNormalFile(d,file.url,file.name);
 
           final snackBar = SnackBar(
             content: Text('Downloaded ${file.name}'),
@@ -138,6 +183,20 @@ class _VideoListScreenState extends State<VideoListScreen> {
       final externalDir = Directory('/storage/emulated/0/SecureVideoFolder');
       return externalDir;
     }
+  }
+
+  Future getUsersVideoList() async{
+    User? user = _auth.currentUser;
+    final uid = user!.uid;
+    var data = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('upload')
+        .get();
+
+    setState(() {
+      _videoList= List.from(data.docs.map((doc) => UploadVideo.fromMap(doc)));
+    });
   }
 
 

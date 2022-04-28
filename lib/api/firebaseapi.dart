@@ -93,11 +93,23 @@ class FirebaseApi {
     Uint8List encData = await _readData(fileName);
     var plainData = await decryptedData(encData);
 
-    var pos = file.lastIndexOf('.');
-    String result = (pos != -1)? file.substring(0, pos): file;
 
-    String p = await _writeData(plainData,d.path + '/$result');
-    print('$p');
+
+    RegExp regExp = RegExp(r'.+(\/|%2F)(.+)\?.+');
+    //This Regex won't work if you remove ?alt...token
+    var matches = regExp.allMatches(fileName);
+
+    var match = matches.elementAt(0);
+    var vName = Uri.decodeFull(match.group(2)!);
+    print("${Uri.decodeFull(match.group(2)!)}");
+
+    var pos = vName.lastIndexOf('.');
+    var st = vName.indexOf('.');
+    String last = (pos != -1)? vName.substring(st, pos): vName;
+    print('$last');
+
+    String p = await _writeData(plainData,d.path + '/$file' + last);
+
   }
 
   //reading bytes of video file before downloading

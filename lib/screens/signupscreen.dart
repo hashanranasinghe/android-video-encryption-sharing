@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import '../models/create_account.dart';
 import 'loginscreen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -18,6 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
   final _form = GlobalKey<FormState>();
+  final _auth = FirebaseAuth.instance;
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -57,7 +62,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 vertical: 5, horizontal: 40),
                             child: TextButton(
                                 onPressed: () {
-
+                                    signUp(emailController.text, passwordController.text);
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
@@ -145,6 +150,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ],
         ));
   }
+
   Widget _buildUsername() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
@@ -261,6 +267,46 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
+
+  void signUp(String email, String password) async{
+    if(_form.currentState!.validate()){
+
+      await _auth.createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) =>{
+        postDetailsToFileStore()
+
+      }).catchError((e)
+      {
+        Fluttertoast.showToast(msg: 'The email address is already taken.',
+          toastLength: Toast.LENGTH_LONG,
+        );
+
+      });
+    }
+
+  }
+
+  postDetailsToFileStore() async{
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    CreateAccDetails createAccDetails = CreateAccDetails();
+
+    //writing all values
+    createAccDetails.userName = usernameController.text;
+    createAccDetails.email = user!.email;
+    createAccDetails.uid = user.uid;
+
+    firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(createAccDetails.toMap());
+
+    Fluttertoast.showToast(msg: "Account created successfully.");
+    Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+  }
+
+
 }
 class Validator {
   static String? NameValidate(String value) {
