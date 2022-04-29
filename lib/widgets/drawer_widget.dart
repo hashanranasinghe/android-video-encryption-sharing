@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../screens/sharevideolistscreen.dart';
+
 class DrawerWidget extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   DrawerWidget({required this.scaffoldKey});
@@ -67,6 +69,28 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ),
                 title: Text(
                   'Video List',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              const Divider(
+                thickness: 2,
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.of(context)
+                      .pushReplacementNamed(ShareVideoListScreen.routeName);
+                },
+                leading: const Icon(
+                  Icons.video_collection_outlined,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  'Share Video List',
                   style: TextStyle(
                     color: Colors.black,
                     fontFamily: 'Poppins',
