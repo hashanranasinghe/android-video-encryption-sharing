@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:app/models/share_video.dart';
 import 'package:app/models/upload_video.dart';
 import 'package:app/screens/contactlistscreen.dart';
 import 'package:flutter/material.dart';

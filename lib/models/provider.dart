@@ -17,3 +17,4 @@ class ShareData extends ChangeNotifier{
   String? get vUrl => _vUrl;
 
 }
+

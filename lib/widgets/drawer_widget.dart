@@ -4,7 +4,7 @@ import 'package:app/screens/videolistscreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../screens/contactlistscreen.dart';
 import '../screens/sharevideolistscreen.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -105,6 +105,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
               ListTile(
                 onTap: () {
+                  Navigator.of(context).pushNamed(ContactListScreen.routeName);
 
                 },
                 leading: const Icon(Icons.contact_page_outlined, color: Colors.black),

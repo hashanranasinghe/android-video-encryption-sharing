@@ -1,15 +1,14 @@
-import 'package:app/models/create_account.dart';
-import 'package:app/screens/uploadscreen.dart';
-import 'package:app/widgets/video_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/provider.dart';
 import '../models/share_video.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/topscreen.dart';
+
+String? finalEmail;
+
 
 class ContactListScreen extends StatefulWidget {
   const ContactListScreen({Key? key}) : super(key: key);
@@ -20,6 +19,27 @@ class ContactListScreen extends StatefulWidget {
 }
 
 class _ContactListScreenState extends State<ContactListScreen> {
+
+
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getEmail();
+  }
+
+  Future getEmail() async{
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var obtainedEmail = sharedPreferences.getString('email');
+    setState(() {
+      finalEmail = obtainedEmail;
+    });
+
+  }
+
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Object> _contactList = [];
@@ -33,6 +53,8 @@ class _ContactListScreenState extends State<ContactListScreen> {
   Widget build(BuildContext context) {
 
     final video = Provider.of<ShareData>(context,listen: false);
+
+
         return Scaffold(
           key: _scaffoldKey,
           resizeToAvoidBottomInset: false,
@@ -62,22 +84,26 @@ class _ContactListScreenState extends State<ContactListScreen> {
                     child: ListView(
                       children: snapshot.data!.docs.map((doc) {
                         final dynamic data = doc.data();
-                        return Container(
-                            padding: EdgeInsets.all(20),
-                            child: GestureDetector(
-                              child: Text(data['userName'].toString()),
 
-                              onTap: () {
-                                setState(() {
-                                  id = data['uid'].toString();
-                                });
-                                print(id);
-                                print(video.vName);
-                                shareVideo(id,video.vName , video.vDes, video.vUrl);
+                          return Container(
+                              padding: EdgeInsets.all(20),
+                              child: GestureDetector(
 
 
-                                // shareVideo(id,)
-                              },));
+                                child: Text( data['userName'].toString()),
+
+
+                                onTap: () async {
+                                  setState(() {
+                                    id = data['uid'].toString();
+                                  });
+                                  print(id);
+                                  print(video.vName);
+                                  print(finalEmail);
+                                  //shareVideo(id,video.vName , video.vDes, video.vUrl);
+
+                                },));
+
                       }).toList(),
                     ),
                   );
@@ -106,5 +132,8 @@ class _ContactListScreenState extends State<ContactListScreen> {
     users.doc(id).collection('share').add(shareVideo.toMap());
     return "success";
   }
+
+
+
 
 }
