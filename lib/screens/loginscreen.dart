@@ -1,9 +1,14 @@
 import 'package:app/screens/signupscreen.dart';
 import 'package:app/screens/uploadscreen.dart';
+import 'package:app/widgets/input_field.dart';
+import 'package:app/widgets/input_password_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../api/Validator.dart';
+import '../widgets/constants.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -41,22 +46,49 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            alignment: Alignment.topLeft,
-                            margin: const EdgeInsets.only(
-                                left: 40, top: 10, bottom: 10),
-                            child: Text(
-                              "Sign-Up",
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontSize: 40,
-                              ),
+                            alignment: Alignment.topCenter,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 200.h,
+                                  width: 200.w,
+                                  child: Image.asset(
+                                    'assets/images/logo2.png',
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 5.r),
+                                  child: Text(
+                                    "Welcome back!",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      fontFamily: 'InriaSans',
+                                      fontWeight: FontWeight.bold,
+
+
+                                      fontSize: 40,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 5,top: 5).r,
+                                  child: Text(
+                                    "Login to your account",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      fontFamily: 'InriaSans',
+                                      fontSize: 20.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           _buildEmail(),
                           _buildPassword(),
                           Container(
                             margin: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 40),
+                                vertical: 5.h, horizontal: 40.w),
                             child: TextButton(
                                 onPressed: () async{
                                   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -66,13 +98,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 6, horizontal: 6),
+                                      vertical: 6.h, horizontal: 6.w),
                                   width: double.infinity,
-                                  child: const Center(
+                                  child: Center(
                                     child: Text(
-                                      'SIGN UP',
+                                      'SIGN IN',
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'InriaSans',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17.sp),
                                     ),
                                   ),
                                 ),
@@ -80,64 +116,63 @@ class _LoginScreenState extends State<LoginScreen> {
                                     shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(27),
+                                          borderRadius: BorderRadius.circular(27.r),
                                         )),
                                     backgroundColor: MaterialStateProperty.all(
-                                        const Color(0xff102248)))),
+                                        kPrimaryColor))),
                           ),
                           SizedBox(
-                            height: 15,
+                            height: 15.h,
                           ),
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            child: Row(
-                              children: const [
-                                Expanded(
-                                    child: Divider(
-                                      color: Color(0xff707070),
-                                      thickness: 3,
-                                    )),
-                                Text(
-                                  '    or sign up with    ',
-                                  style: TextStyle(color: Color(0xff707070)),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Color(0xff707070),
-                                    thickness: 3,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Container(
+                          //   margin: EdgeInsets.symmetric(
+                          //       vertical: 10, horizontal: 10),
+                          //   child: Row(
+                          //     children: const [
+                          //       Expanded(
+                          //           child: Divider(
+                          //             color: Color(0xff707070),
+                          //             thickness: 3,
+                          //           )),
+                          //       Text(
+                          //         '    or sign up with    ',
+                          //         style: TextStyle(color: Color(0xff707070)),
+                          //       ),
+                          //       Expanded(
+                          //         child: Divider(
+                          //           color: Color(0xff707070),
+                          //           thickness: 3,
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: 10,
+                          // ),
+                          // SizedBox(
+                          //   height: 35,
+                          //   child: GestureDetector(
+                          //     onTap: (){
+                          //
+                          //     },
+                          //   ),
+                          // ),
                           SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            height: 35,
-                            child: GestureDetector(
-                              onTap: (){
-
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
+                            height: 10.h,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text("Already have an account ?",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-
-                                ),),
+                                style: TextStyle(color: Colors.black,
+                                    fontFamily: 'InriaSans',
+                                    fontWeight: FontWeight.bold)),
                               TextButton(child: const Text(
                                 'Sign up',
-                                // style: TextStyle(color: Color(0xff707070)),
+                                style: TextStyle(color: kPrimaryColor,
+                                    fontFamily: 'InriaSans',
+                                    fontWeight: FontWeight.bold)
                               ),
                                 onPressed: (){
                                   Navigator.of(context).pushReplacementNamed(SignupScreen.routeName);
@@ -151,72 +186,40 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
   }
 
-  Widget _buildEmail() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
-      child: TextFormField(
-        controller: emailController,
-        keyboardType: TextInputType.emailAddress,
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-            contentPadding:
-            EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-            hintText: "Email",
-            border:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(30))),
-        validator: (value) {
-          return Validator.emailValidate(value!);
-        },
-        onSaved: (String? value) {
-          _email = value;
-        },
-      ),
+
+  Widget _buildEmail(){
+    return InputField(
+      controller: emailController,
+      icon: Icons.email,
+      text: 'User email',
+      textAlign: TextAlign.left,
+      textInputType: TextInputType.emailAddress,
+      function: Validator.emailValidate,
+
+           );
+  }
+
+  Widget _buildPassword(){
+    return InputPasswordField(
+      textEditingController: passwordController,
+      text: 'Password',
+      function: Validator.passwordValidate,
     );
   }
 
-  Widget _buildPassword() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
-      child: TextFormField(
-        controller: passwordController,
-        obscureText: !_passwordVisible,
-        keyboardType: TextInputType.visiblePassword,
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-          hintText: "Password",
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-          suffixIcon: IconButton(
-            icon: Icon(
-                _passwordVisible ? Icons.visibility : Icons.visibility_off),
-            color: Colors.black,
-            onPressed: () {
-              setState(() {
-                _passwordVisible = !_passwordVisible;
-              });
-            },
-          ),
-        ),
-        validator: (value) {
-          return Validator.PasswordValidate(value!);
-        },
-        onSaved: (String? value) {
-          _password = value;
-        },
-      ),
-    );
-  }
 
   Future<void> signIn(String email, String password) async {
     if (_form.currentState!.validate()) {
+      print(email);
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((uid) => {
-        Fluttertoast.showToast(msg: "Login Successful"),
+        Fluttertoast.showToast(msg: "Login Successfully"),
         Navigator.of(context)
             .pushReplacementNamed(UploadScreen.routeName),
       })
           .catchError((e) {
+
         Fluttertoast.showToast(msg: 'Incorrect Email or Password.',
             toastLength: Toast.LENGTH_LONG
         );
@@ -225,32 +228,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 
+
+
 }
-
-class Validator {
-
-  static String? PasswordValidate(String passwordValue) {
-    if (passwordValue.isEmpty) {
-      return "Password Cannot be Empty";
-    } else if (!passwordValue.contains(RegExp(r'[a-zA-Z0-9]'))) {
-      return "Invalid Password";
-    }else if(passwordValue.length < 6){
-      return "Enter valid Password.(Min. 6 characters)";
-    }
-    return null;
-  }
-
-  static String? emailValidate(String emailValue){
-    const pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    final regExp = RegExp(pattern);
-    if (emailValue.isEmpty) {
-      return 'Email can\'t be empty';
-    } else if (!regExp.hasMatch(emailValue)) {
-      return 'Enter a valid email';
-    } else {
-      return null;
-    }
-  }
-}
-

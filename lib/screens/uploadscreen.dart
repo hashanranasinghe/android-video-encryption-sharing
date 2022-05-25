@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:app/api/Validator.dart';
 import 'package:app/models/create_account.dart';
 import 'package:app/models/upload_video.dart';
 import 'package:app/widgets/drawer_widget.dart';
@@ -9,10 +10,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../api/firebaseapi.dart';
+import '../widgets/constants.dart';
+import '../widgets/input_field.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({Key? key}) : super(key: key);
@@ -50,136 +54,156 @@ class _UploadScreenState extends State<UploadScreen> {
       drawer: DrawerWidget(
         scaffoldKey: _scaffoldKey,
       ),
-      body: Column(
-        children: [
-          TopScreenWidget(
-              scaffoldKey: _scaffoldKey,
-              topLeft: SizedBox(
-                height: 50,
-                width: 50,
-              )),
-          Form(
-            key: _form,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    alignment: Alignment.topCenter,
-                    child: const Text(
-                      "Upload video",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 40,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            TopScreenWidget(
+                scaffoldKey: _scaffoldKey,
+                topLeft: SizedBox(
+                  height: 50.h,
+                  width: 50.w,
+                )),
+            Form(
+              key: _form,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Container(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        "Upload video",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontFamily: 'InriaSans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40.sp,
+                        ),
                       ),
                     ),
-                  ),
-                  _buildVideoName(),
-                  _buildDescription(),
-                  TextButton(
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    _buildVideoName(),
+                    _buildDescription(),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                          vertical: 5.h, horizontal: 40.w),
+                      child: TextButton(
 
-                      onPressed: () {
-                          selectFile();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 6),
-                        width: double.infinity,
-                        child: const Center(
-                          child: Text(
-                            'Select video',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white),
+                          onPressed: () {
+                              selectFile();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 6.h, horizontal: 6.w),
+                            width: double.infinity,
+                            child: Center(
+                              child: Text(
+                                'Select video',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'InriaSans',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17.sp),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      style: ButtonStyle(
-                          shape: MaterialStateProperty.all<
-                              RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(27),
-                              )),
-                          backgroundColor: MaterialStateProperty.all(
-                              const Color(0xff102248)))),
-                  SizedBox(height: 8),
-                  Text(
-                    fileName,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 48),
-                  TextButton(
-                      onPressed: () {
-                              uploadFile();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 6),
-                        width: double.infinity,
-                        child: const Center(
-                          child: Text(
-                            'Upload',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white),
+                          style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(27.r),
+                                  )),
+                              backgroundColor: MaterialStateProperty.all(
+                                  kPrimaryColor))),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      fileName,
+                      style: TextStyle(
+                          color: kPrimaryColor,
+                          fontFamily: 'InriaSans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17.sp),
+                    ),
+                    SizedBox(height: 48.h),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                          vertical: 5.h, horizontal: 40.w),
+                      child: TextButton(
+                          onPressed: () {
+                                  uploadFile();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 6.h, horizontal: 6.w),
+                            width: double.infinity,
+                            child: Center(
+                              child: Text(
+                                'Upload',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'InriaSans',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17.sp),
+                              ),
+                            ),
                           ),
-                        ),
+                          style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(27.r),
+                                  )),
+                              backgroundColor: MaterialStateProperty.all(
+                                 kPrimaryColor))),
+                    ),
+                    SizedBox(
+                      height: 250.h,
+                      width: 250.w,
+                      child: Image.asset(
+                        'assets/images/img.png',
                       ),
-                      style: ButtonStyle(
-                          shape: MaterialStateProperty.all<
-                              RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(27),
-                              )),
-                          backgroundColor: MaterialStateProperty.all(
-                              const Color(0xff102248)))),
-                  SizedBox(height: 20),
-                  task != null ? buildUploadStatus(task!) : Container(),
+                    ),
+                    task != null ? buildUploadStatus(task!) : Container(),
 
-                ],
-              )),
-        ],
+                  ],
+                )),
+          ],
+        ),
       ),
     );
   }
 
   //video name
-  Widget _buildVideoName() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
-      child: TextFormField(
-        controller: videoNameController,
-        autofocus: true,
+  Widget _buildVideoName(){
+      return InputField(
         textAlign: TextAlign.center,
-        decoration: InputDecoration(
-            contentPadding:
-            EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-            hintText: "Enter the video name",
-            border:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(30))),
-        onSaved: (String? value) {
-          _videoName = value;
-        },
-      ),
-    );
-  }
+        icon: Icons.video_collection_rounded,
+        controller: videoNameController,
+        text: 'Video Name',
+        textInputType: TextInputType.emailAddress,
+        function: Validator.videoValidate,
+      );
+    }
 
   //description
-  Widget _buildDescription() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
-      child: TextFormField(
-        controller: descriptionController,
-        autofocus: true,
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-            contentPadding:
-            EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-            hintText: "Enter the video description",
-            border:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(30))),
-
-        onSaved: (String? value) {
-          _description = value;
-        },
-      ),
+  Widget _buildDescription(){
+    return InputField(
+      function: Validator.videoValidate,
+      textAlign: TextAlign.center,
+      icon: Icons.description_rounded,
+      controller: descriptionController,
+      text: 'Video Description',
+      textInputType: TextInputType.text,
     );
   }
 
@@ -296,7 +320,7 @@ class _UploadScreenState extends State<UploadScreen> {
 
         return Text(
           '$percentage %',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
         );
       } else {
         return Container();

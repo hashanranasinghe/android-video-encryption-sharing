@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/share_video.dart';
 import '../widgets/drawer_widget.dart';
-import '../widgets/share_video_card.dart';
+import '../widgets/videoList/share_video_card.dart';
 import '../widgets/topscreen.dart';
 
 class ShareVideoListScreen extends StatefulWidget {
@@ -45,17 +46,17 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
                     TopScreenWidget(
                         scaffoldKey: _scaffoldKey,
                         topLeft: SizedBox(
-                          height: 50,
-                          width: 50,
+                          height: 50.h,
+                          width: 50.w,
                         )),
-                    buildHeader(_videoList.length),
-                    const SizedBox(height: 12),
+                    // buildHeader(_videoList.length),
+                    // const SizedBox(height: 12),
                     Expanded(
                       child: isLoading == true ?
                       Center(
                         child: Container(
-                          width: 30,
-                          height: 30,
+                          width: 30.w,
+                          height: 30.h,
                           child: const CircularProgressIndicator(),),)
                           : ListView.builder(
                         itemCount: _videoList.length,
@@ -72,8 +73,8 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
   Widget buildHeader(int length) => ListTile(
     tileColor: Colors.blue,
     leading: Container(
-      width: 52,
-      height: 52,
+      width: 52.w,
+      height: 52.h,
       child: Icon(
         Icons.file_copy,
         color: Colors.white,
@@ -83,7 +84,7 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
       '$length Files',
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 20,
+        fontSize: 20.sp,
         color: Colors.white,
       ),
     ),

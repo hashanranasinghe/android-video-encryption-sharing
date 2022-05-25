@@ -1,4 +1,6 @@
+import 'package:app/widgets/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TopScreenWidget extends StatelessWidget {
   const TopScreenWidget(
@@ -21,16 +23,17 @@ class TopScreenWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 30, left: 10),
+              padding: EdgeInsets.only(top: 30, left: 10).r,
               child: IconButton(
-                icon: const Icon(Icons.menu, color: Colors.black),
+                icon: const Icon(Icons.menu, color: kPrimaryColor,),
                 onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                 iconSize: 30,
               ),
             ),
-            Container(
-              height: 75,
-              width: 100,
+            SizedBox(
+              height: 75.h,
+              width: 100.w,
+              child: Center(child: Image.asset('assets/images/logo2.png')),
             ),
             topLeft,
             // IconButton(onPressed: () {}, icon: Icon(Icons.home))

@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:app/models/upload_video.dart';
-import 'package:app/widgets/video_card.dart';
+import 'package:app/widgets/videoList/video_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/topscreen.dart';
 
@@ -48,18 +48,18 @@ class _VideoListScreenState extends State<VideoListScreen> {
                     TopScreenWidget(
                         scaffoldKey: _scaffoldKey,
                         topLeft: SizedBox(
-                          height: 50,
-                          width: 50,
+                          height: 50.h,
+                          width: 50.w,
                         )),
-                    buildHeader(_videoList.length),
-                    const SizedBox(height: 12),
+                    //buildHeader(_videoList.length),
+                    //const SizedBox(height: 12),
 
                     Expanded(
                       child: isLoading == true ?
                       Center(
                         child: Container(
-                          width: 30,
-                          height: 30,
+                          width: 30.w,
+                          height: 30.h,
                           child: const CircularProgressIndicator(),),)
                       : ListView.builder(
                         itemCount: _videoList.length,
@@ -68,30 +68,11 @@ class _VideoListScreenState extends State<VideoListScreen> {
                         },
                       ),
                     ),
+
                   ],
                 )
                   );
           }
-
-  Widget buildHeader(int length) => ListTile(
-    tileColor: Colors.blue,
-    leading: Container(
-      width: 52,
-      height: 52,
-      child: Icon(
-        Icons.file_copy,
-        color: Colors.white,
-      ),
-    ),
-    title: Text(
-      '$length Files',
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
-        color: Colors.white,
-      ),
-    ),
-  );
 
   Future getUsersVideoList() async{
     User? user = _auth.currentUser;

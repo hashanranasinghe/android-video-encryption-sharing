@@ -1,9 +1,14 @@
+import 'package:app/models/favorite_contact.dart';
+import 'package:app/widgets/constants.dart';
+import 'package:app/widgets/contact_list_field.dart';
+import 'package:app/widgets/dialog_box.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/provider.dart';
-import '../models/share_video.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/topscreen.dart';
 
@@ -11,6 +16,7 @@ String? finalEmail;
 
 
 class ContactListScreen extends StatefulWidget {
+
   const ContactListScreen({Key? key}) : super(key: key);
   static const routeName = 'ContactList screen';
 
@@ -19,7 +25,7 @@ class ContactListScreen extends StatefulWidget {
 }
 
 class _ContactListScreenState extends State<ContactListScreen> {
-
+  String? name = '';
 
 
 
@@ -42,8 +48,10 @@ class _ContactListScreenState extends State<ContactListScreen> {
 
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Object> _contactList = [];
   String? id;
+  String? cid;
+  final _auth = FirebaseAuth.instance;
+
 
 
 
@@ -52,7 +60,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final video = Provider.of<ShareData>(context,listen: false);
+
 
 
         return Scaffold(
@@ -66,11 +74,24 @@ class _ContactListScreenState extends State<ContactListScreen> {
               TopScreenWidget(
                   scaffoldKey: _scaffoldKey,
                   topLeft: SizedBox(
-                    height: 50,
-                    width: 50,
+                    height: 50.h,
+                    width: 50.w,
                   )),
+              SizedBox(
+                height: 20.h,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: _buildSearchBar()),
               StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('users')
+                stream: (name!= ''&& name != null)?
+                    FirebaseFirestore.instance.collection('users')
+                        .where('userName',isGreaterThanOrEqualTo:name)
+                        .orderBy("userName",descending: false)
+                        .startAt([name,])
+                        .endAt([name! + '\uf8ff',])
+                        .snapshots()
+                :FirebaseFirestore.instance.collection('users').orderBy('userName',descending: false)
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -81,31 +102,34 @@ class _ContactListScreenState extends State<ContactListScreen> {
                     );
                   }
                   return Expanded(
-                    child: ListView(
+                    child:ListView(
                       children: snapshot.data!.docs.map((doc) {
                         final dynamic data = doc.data();
+                          return Visibility(
+                            child: (finalEmail != data['email'])?
+                            ContactListTileField(
+                                text: data['userName'].toString(),
+                                iconData: Icons.add_circle_outline_rounded,
+                                function: () {
+                                  DialogBox.dialogBox(
+                                  "Do you really want to add ${data['userName'].toString()} to my contacts?"
+                                  , context, (){
+                                    print(data['uid'].toString());
+                                    print(data['userName'].toString());
+                                    print(data['email'].toString());
 
-                          return Container(
-                              padding: EdgeInsets.all(20),
-                              child: GestureDetector(
-
-
-                                child: Text( data['userName'].toString()),
-
-
-                                onTap: () async {
-                                  setState(() {
-                                    id = data['uid'].toString();
+                                    User? user = _auth.currentUser;
+                                    print(user!.uid);
+                                    favoriteContact(data['userName'].toString(),
+                                        data['email'].toString());
                                   });
-                                  print(id);
-                                  print(video.vName);
-                                  print(finalEmail);
-                                  //shareVideo(id,video.vName , video.vDes, video.vUrl);
 
-                                },));
+                                })
+                                :Container()
+                          );
 
                       }).toList(),
-                    ),
+                    )
                   );
                 },
               ),
@@ -117,20 +141,47 @@ class _ContactListScreenState extends State<ContactListScreen> {
 
   }
 
-  Future<String> shareVideo(id,videoName,videoDes,urlDownload) async{
+  Future<String> favoriteContact(contactName,contactEmail) async{
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     CollectionReference users = firebaseFirestore.collection('users');
-    ShareVideo shareVideo = ShareVideo();
+    FavoriteContact favoriteContact = FavoriteContact();
+    User? user = _auth.currentUser;
 
     //writing all values
-    shareVideo.videoName = videoName;
-    shareVideo.videoDes = videoDes;
-    shareVideo.videoUrl = urlDownload;
-    shareVideo.uid = id;
+    favoriteContact.contactName = contactName;
+    favoriteContact.contactEmail = contactEmail;
+    favoriteContact.uid = user!.uid;
 
-    users.doc(id).collection('share').add(shareVideo.toMap());
+    users.doc(user.uid).collection('contacts').add(favoriteContact.toMap());
+    Fluttertoast.showToast(msg: "Added favorite successfully.");
     return "success";
+  }
+
+
+  Widget _buildSearchBar() {
+    return CupertinoSearchTextField(
+
+      prefixInsets: EdgeInsets.only(left: 20.r),
+      itemSize: 25,
+      autofocus: true,
+      onChanged: (value) {
+        // Provider.of<Words>(context, listen: false).filterMethod(value);
+        setState(() {
+          name = value;
+          print(name);
+
+        });
+      },
+      style: TextStyle(
+        fontSize: 20.sp
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.r),
+        color: kPrimaryLightColor,
+        border: Border.all(width: 2.w,color: kPrimaryColor)
+      ),
+    );
   }
 
 

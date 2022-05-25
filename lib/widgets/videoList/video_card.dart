@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:app/models/upload_video.dart';
-import 'package:app/screens/contactlistscreen.dart';
+import 'package:app/screens/favoritecontactlistscreen.dart';
+import 'package:app/widgets/videoList/card_field.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../api/firebaseapi.dart';
-import '../models/provider.dart';
+import '../../api/firebaseapi.dart';
+import '../../models/provider.dart';
 
 class VideoCard extends StatelessWidget {
  final UploadVideo _uploadVideo;
@@ -15,33 +17,19 @@ class VideoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
-        return Container(
-          child: Card(
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 10),
-                        child: Text("${_uploadVideo.videoName}"),
-                      ),
-                      IconButton(onPressed: () async {
+    return CardField(
+      textName: "${_uploadVideo.videoName}${FirebaseApi.getExtension(_uploadVideo.videoUrl)}",
+        downloadFunction: () async{
                         Directory d = await getExternalVisibleDir;
-                        //await FirebaseApi.downloadFile(file.ref);
                         await FirebaseApi.getNormalFile(d,_uploadVideo.videoUrl,_uploadVideo.videoName);
-
                         final snackBar = SnackBar(
                           content: Text('Downloaded ${_uploadVideo.videoName}'),
                         );
+
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }, icon: const Icon(Icons.download_rounded)),
-                      IconButton(onPressed: (){
-                        Navigator.of(context).pushReplacementNamed(ContactListScreen.routeName);
+        },
+        shareFunction:(){
+                        Navigator.of(context).pushNamed(FavoriteContactListScreen.routeName);
                         Provider.of<ShareData>(context,listen: false).sharingData(
                             _uploadVideo.videoName.toString(),
                             _uploadVideo.videoDes.toString(),
@@ -50,17 +38,7 @@ class VideoCard extends StatelessWidget {
                         print(Provider.of<ShareData>(context,listen: false).vName);
                         print(_uploadVideo.videoUrl);
                         print(_uploadVideo.videoDes);
-                      }, icon: const Icon(Icons.share_rounded)),
-
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-
-
+        });
   }
 
 

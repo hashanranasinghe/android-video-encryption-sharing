@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app/screens/uploadscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'loginscreen.dart';
@@ -50,23 +51,27 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-
-            // logo here
-            SizedBox(
-              height: 200,
-              width: 200,
-              child: Image.asset(
-                'assets/images/logo.png',
+      body: Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/splashthree.png'),
+              fit: BoxFit.cover,
+            )
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 230.w,
+                height: 230.h,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 2.w,
+                ),
               ),
-            ),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 import'package:encrypt/encrypt.dart' as enc;
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -49,11 +48,13 @@ class FirebaseApi {
   static getNormalFile(Directory d,fileName,file) async{
     Uint8List encData = await _readData(fileName);
     var plainData = await decryptedData(encData);
+    var last = getExtension(fileName);
+    print('$last');
+    String p = await _writeData(plainData,d.path + '/$file' + last);
 
-
-
+  }
+  static getExtension(fileName){
     RegExp regExp = RegExp(r'.+(\/|%2F)(.+)\?.+');
-    //This Regex won't work if you remove ?alt...token
     var matches = regExp.allMatches(fileName);
 
     var match = matches.elementAt(0);
@@ -63,10 +64,7 @@ class FirebaseApi {
     var pos = vName.lastIndexOf('.');
     var st = vName.indexOf('.');
     String last = (pos != -1)? vName.substring(st, pos): vName;
-    print('$last');
-
-    String p = await _writeData(plainData,d.path + '/$file' + last);
-
+    return last;
   }
 
   //reading bytes of video file before downloading

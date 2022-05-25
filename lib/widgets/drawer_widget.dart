@@ -1,9 +1,14 @@
+import 'package:app/screens/favoritecontactlistscreen.dart';
 import 'package:app/screens/loginscreen.dart';
 import 'package:app/screens/uploadscreen.dart';
 import 'package:app/screens/videolistscreen.dart';
+import 'package:app/widgets/list_tile_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/provider.dart';
 import '../screens/contactlistscreen.dart';
 import '../screens/sharevideolistscreen.dart';
 
@@ -21,165 +26,80 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     return Drawer(
       child: ListView(
         children: [
-          // DrawerHeader(
-          //   child: Container(
-          //     width: double.infinity,
-          //     decoration: const BoxDecoration(
-          //         image: DecorationImage(
-          //           image: AssetImage('assets/images/menu.jpg'),
-          //           fit: BoxFit.fill,
-          //         )),
-          //   ),
-          // ),
+
           Column(
             children: <Widget>[
-              ListTile(
-                onTap: () {
-                  Navigator.of(context)
-                      .pushReplacementNamed(UploadScreen.routeName);
+
+              ListTileField(
+                  function: () {
+                    Provider.of<ShareData>(context,listen: false).sharingData('','','',);
+                    Navigator.of(context)
+                        .pushReplacementNamed(UploadScreen.routeName);
+                  },
+                  icon: Icons.home_outlined,
+                  text: 'Home'),
+
+              ListTileField(
+                  function: () {
+                    Provider.of<ShareData>(context,listen: false).sharingData('','','',);
+                    Navigator.of(context)
+                        .pushReplacementNamed(VideoListScreen.routeName);
+                  },
+                  icon: Icons.video_collection_outlined,
+                  text: 'Video List'),
+
+              ListTileField(
+                  function: () {
+                    Provider.of<ShareData>(context,listen: false).sharingData('','','',);
+                    Navigator.of(context)
+                        .pushReplacementNamed(ShareVideoListScreen.routeName);
+                  },
+                  icon: Icons.video_collection_outlined,
+                  text: 'Share Video List'),
 
 
-                },
-                leading: const Icon(
-                  Icons.home_outlined,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  'Home',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+              ListTileField(
+                  function: () {
+                    Provider.of<ShareData>(context,listen: false).sharingData('','','',);
+                    Navigator.of(context).pushNamed(ContactListScreen.routeName);
+                  },
+                  icon: Icons.contact_page_outlined,
+                  text: 'Contacts'),
+
+              ListTileField(
+                  function: () {
+                    Navigator.of(context)
+                        .pushNamed(FavoriteContactListScreen.routeName);
+                  },
+                  icon: Icons.favorite_border,
+                  text: 'My Contacts'),
+
+
+              ListTileField(
+                  function: () async{
+                    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                    sharedPreferences.remove('email');
+                    Navigator.of(context)
+                        .pushReplacementNamed(LoginScreen.routeName);
+                  },
+                  icon: Icons.logout_outlined,
+                  text: 'Log Out'),
+
+              Padding(padding: EdgeInsets.only(top: 100)),
+              Stack(
+                children: [
+                  Positioned(
+                    child: SizedBox(
+                        height: 200.h,
+                        width: 200.w,
+                        child: Image.asset('assets/images/logo2.png')),
                   ),
-                ),
+                ],
               ),
-              const Divider(
-                thickness: 2,
-              ),
-              // ignore: prefer_const_constructors
-              ListTile(
-                onTap: () {
-                  Navigator.of(context)
-                      .pushReplacementNamed(VideoListScreen.routeName);
-                },
-                leading: const Icon(
-                  Icons.video_collection_outlined,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  'Video List',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              const Divider(
-                thickness: 2,
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.of(context)
-                      .pushReplacementNamed(ShareVideoListScreen.routeName);
-                },
-                leading: const Icon(
-                  Icons.video_collection_outlined,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  'Share Video List',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              const Divider(
-                thickness: 2,
-              ),
-
-              ListTile(
-                onTap: () {
-                  Navigator.of(context).pushNamed(ContactListScreen.routeName);
-
-                },
-                leading: const Icon(Icons.contact_page_outlined, color: Colors.black),
-                title: Text(
-                  'Contacts',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              const Divider(
-                thickness: 2,
-              ),
-
-              ListTile(
-                onTap: () {
-
-                },
-                leading: const Icon(Icons.face_outlined,
-                    color: Colors.black),
-                title: Text(
-                  'My Profile',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              const Divider(
-                thickness: 2,
-              ),
-
-
-
-              ListTile(
-                onTap: () async{
-                  final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                  sharedPreferences.remove('email');
-                  Navigator.of(context)
-                      .pushReplacementNamed(LoginScreen.routeName);
-
-
-
-
-                },
-                leading: const Icon(Icons.logout_outlined,
-                    color: Colors.black),
-                title: Text(
-                  'Log Out',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-
-              // Stack(
-              //   children: [
-              //     Positioned(
-              //       child: SizedBox(
-              //           height: 150.h,
-              //           width: 150.w,
-              //           child: Image.asset('assets/images/logo_1.png')),
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ],
       ),
-    );;
+    );
   }
 }
