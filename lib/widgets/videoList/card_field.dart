@@ -8,12 +8,14 @@ class CardField extends StatelessWidget {
   final String? textName;
   final Function downloadFunction;
   final Function shareFunction;
+  final Function deleteFunction;
 
   const CardField({
     Key? key,
     this.textName,
     required this.downloadFunction,
-    required this.shareFunction
+    required this.shareFunction,
+    required this.deleteFunction
   }) : super(key: key);
 
   @override
@@ -54,7 +56,15 @@ class CardField extends StatelessWidget {
                       }, icon: const Icon(
                         Icons.download_rounded,
                         color: Colors.white,
-                        size: 30,)),
+                        size: 30,),
+                      ),
+                      IconButton(onPressed: () {
+                        deleteFunction();
+                      }, icon: const Icon(
+                        Icons.delete_rounded,
+                        color: Colors.white,
+                        size: 30,),
+                      ),
                         ],
                   ),
                 ],

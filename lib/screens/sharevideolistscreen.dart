@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/share_video.dart';
+import '../widgets/constants.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/videoList/share_video_card.dart';
 import '../widgets/topscreen.dart';
@@ -28,7 +29,10 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    getShareVideoList();
+    setState(() {
+      getShareVideoList();
+    });
+
   }
 
 
@@ -57,11 +61,13 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
                         child: Container(
                           width: 30.w,
                           height: 30.h,
-                          child: const CircularProgressIndicator(),),)
+                          child: const CircularProgressIndicator(
+                            color: kPrimaryColor,
+                          ),),)
                           : ListView.builder(
                         itemCount: _videoList.length,
                         itemBuilder: (context, index) {
-                          return ShareVideoCard(_videoList[index] as ShareVideo);
+                          return ShareVideoCard(_videoList[index] as ShareVideo,index);
                         },
                       ),
                     ),
@@ -69,26 +75,6 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
                 ),
     );
   }
-
-  Widget buildHeader(int length) => ListTile(
-    tileColor: Colors.blue,
-    leading: Container(
-      width: 52.w,
-      height: 52.h,
-      child: Icon(
-        Icons.file_copy,
-        color: Colors.white,
-      ),
-    ),
-    title: Text(
-      '$length Files',
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 20.sp,
-        color: Colors.white,
-      ),
-    ),
-  );
 
   Future getShareVideoList() async{
     User? user = _auth.currentUser;

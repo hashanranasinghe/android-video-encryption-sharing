@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-
 import '../models/provider.dart';
 import '../models/share_video.dart';
 import '../widgets/constants.dart';
@@ -75,9 +74,13 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot){
                   if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: kPrimaryColor,
+                        ),
 
+                      ),
                     );
                   }
                   return Expanded(

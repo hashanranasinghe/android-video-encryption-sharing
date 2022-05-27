@@ -96,9 +96,13 @@ class _ContactListScreenState extends State<ContactListScreen> {
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: kPrimaryColor,
+                        ),
 
+                      ),
                     );
                   }
                   return Expanded(

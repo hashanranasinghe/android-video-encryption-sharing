@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lottie/lottie.dart';
+import '../widgets/constants.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/topscreen.dart';
 
@@ -22,6 +22,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
   final _auth = FirebaseAuth.instance;
   List<Object> _videoList = [];
   bool isLoading = true;
+  var i;
 
 
 
@@ -36,6 +37,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
@@ -60,11 +62,14 @@ class _VideoListScreenState extends State<VideoListScreen> {
                         child: Container(
                           width: 30.w,
                           height: 30.h,
-                          child: const CircularProgressIndicator(),),)
+                          child: const CircularProgressIndicator(
+                            color: kPrimaryColor,
+                          ),),)
                       : ListView.builder(
                         itemCount: _videoList.length,
                         itemBuilder: (context, index) {
-                          return VideoCard(_videoList[index] as UploadVideo);
+                         print(index);
+                         return VideoCard(_videoList[index] as UploadVideo,index);
                         },
                       ),
                     ),
@@ -86,8 +91,12 @@ class _VideoListScreenState extends State<VideoListScreen> {
     setState(() {
       _videoList= List.from(data.docs.map((doc) => UploadVideo.fromMap(doc)));
        isLoading = false;
+
     });
+
   }
+
+
 
 
 }
