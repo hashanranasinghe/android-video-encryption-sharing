@@ -1,3 +1,4 @@
+import 'package:app/api/firebaseapi.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:string_extensions/string_extensions.dart';
 import '../models/provider.dart';
 import '../models/share_video.dart';
 import '../widgets/constants.dart';
@@ -26,6 +28,7 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
   String? name = '';
   final _auth = FirebaseAuth.instance;
   String? id;
+  dynamic info;
 
   Future getData(id) async {
     var fireStore = FirebaseFirestore.instance;
@@ -83,37 +86,33 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                       ),
                     );
                   }
+
                   return Expanded(
-                      child: (video.vName== null||video.vName == '')? ListView(
-                        children: snapshot.data!.docs.map((doc) {
-                          final dynamic data = doc.data();
-                          return Visibility(
-                              child:
-                              ContactListTileField(
-                                  text: data['contactName'].toString(),
-                                  iconData: Icons.delete,
-                                  function: () async {
-                                    print(data['uid'].toString());
-                                    print(data['contactName'].toString());
-                                    print(data['contactEmail'].toString());
-                                    User? user = _auth.currentUser;
 
-                                    DocumentReference doc_ref=FirebaseFirestore.instance.collection("users").doc(user!.uid).collection("contacts").doc();
+                      child: (video.vName== null||video.vName == '')?
 
 
-                                    DocumentSnapshot docSnap = await doc_ref.get();
-                                    var doc_id2 = docSnap;
-                                    print(doc_id2);
+                      ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            final doc = snapshot.data!.docs[index];
+                            final dynamic data = doc.data();
+                            return  Visibility(
+                                child: ContactListTileField(
+                                    text: data['contactName'].toString(),
+                                    iconData: Icons.delete,
+                                    function: () async {
+                                      DialogBox.dialogBox(
+                                          "Do you really want to delete ${data['contactName'].toString().capitalize}? "
+                                          , context
+                                          , (){
+                                        deleteContact(index,context);
+                                      });
+                                    })
+                            );}
+                      )
 
-
-
-
-                                  })
-
-                          );
-
-                        }).toList(),
-                      ):ListView(
+                          :ListView(
                         children: snapshot.data!.docs.map((doc) {
                           final dynamic data = doc.data();
                           return Visibility(
@@ -122,7 +121,7 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                                   text: data['contactName'].toString(),
                                   function: () {
                                     DialogBox.dialogBox(
-                                        'Do you really want to share ${video.vName} to ${data['contactName'].toString()}?',
+                                        'Do you really want to share ${video.vName.capitalize}${FirebaseApi.getExtension(video.vUrl)} to ${data['contactName'].toString()}?',
                                         context,
                                             (){
                                           setState(() {
@@ -132,12 +131,12 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                                           print(video.vName);
 
 
-                                          // shareVideo(
-                                          //     id,
-                                          //     video.vName ,
-                                          //     video.vDes,
-                                          //     video.vUrl);
-                                          // Navigator.of(context).pushNamed(FavoriteContactListScreen.routeName);
+                                          shareVideo(
+                                              id,
+                                              video.vName ,
+                                              video.vDes,
+                                              video.vUrl).whenComplete(() =>Navigator.of(context).pushNamed(FavoriteContactListScreen.routeName) );
+                                          ;
                                         });
 
                                   })
@@ -178,6 +177,24 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
       ),
     );
   }
+
+  Future deleteContact(index,context) async{
+    print(index);
+
+    User? user = _auth.currentUser;
+    final uid = user!.uid;
+    var data = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('contacts')
+        .get();
+
+    await FirebaseFirestore.instance.collection("users").doc(uid)
+        .collection("contacts").doc(data.docs[index].id)
+        .delete();
+
+  }
+
   Future<String> shareVideo(id,videoName,videoDes,urlDownload) async{
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;

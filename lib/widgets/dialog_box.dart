@@ -25,6 +25,7 @@ class DialogBox{
                 ),),
               onPressed: () async{
                 function();
+                Navigator.pop(context);
               },)
           ],
         ));

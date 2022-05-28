@@ -26,6 +26,8 @@ class ContactListScreen extends StatefulWidget {
 
 class _ContactListScreenState extends State<ContactListScreen> {
   String? name = '';
+  List contact = [];
+
 
 
 
@@ -34,6 +36,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // getUsersContactList();
     getEmail();
   }
 
@@ -51,6 +54,8 @@ class _ContactListScreenState extends State<ContactListScreen> {
   String? id;
   String? cid;
   final _auth = FirebaseAuth.instance;
+
+
 
 
 
@@ -110,7 +115,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
                       children: snapshot.data!.docs.map((doc) {
                         final dynamic data = doc.data();
                           return Visibility(
-                            child: (finalEmail != data['email'])?
+                            child: (finalEmail != data['email'] )?
                             ContactListTileField(
                                 text: data['userName'].toString(),
                                 iconData: Icons.add_circle_outline_rounded,
@@ -124,8 +129,10 @@ class _ContactListScreenState extends State<ContactListScreen> {
 
                                     User? user = _auth.currentUser;
                                     print(user!.uid);
-                                    favoriteContact(data['userName'].toString(),
+                                    favoriteContact(data['uid'].toString(),data['userName'].toString(),
                                         data['email'].toString());
+
+
                                   });
 
                                 })
@@ -145,7 +152,37 @@ class _ContactListScreenState extends State<ContactListScreen> {
 
   }
 
-  Future<String> favoriteContact(contactName,contactEmail) async{
+  Future getUsersContactList() async{
+    User? user = _auth.currentUser;
+    final uid = user!.uid;
+    var data = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('contacts')
+        .snapshots();
+
+    CollectionReference _collectionRef =
+    FirebaseFirestore.instance.collection('users').doc(uid).collection('contacts');
+
+
+      // Get docs from collection reference
+      QuerySnapshot querySnapshot = await _collectionRef.get();
+
+      // Get data from docs and convert map to List
+      final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+
+      print(allData);
+      setState(() {
+        contact = allData;
+      });
+
+      var c = allData.contains('test2');
+      print(c);
+  }
+
+
+  Future<String> favoriteContact(uid,contactName,contactEmail) async{
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     CollectionReference users = firebaseFirestore.collection('users');
@@ -155,9 +192,9 @@ class _ContactListScreenState extends State<ContactListScreen> {
     //writing all values
     favoriteContact.contactName = contactName;
     favoriteContact.contactEmail = contactEmail;
-    favoriteContact.uid = user!.uid;
+    favoriteContact.uid = uid;
 
-    users.doc(user.uid).collection('contacts').add(favoriteContact.toMap());
+    users.doc(user!.uid).collection('contacts').add(favoriteContact.toMap());
     Fluttertoast.showToast(msg: "Added favorite successfully.");
     return "success";
   }

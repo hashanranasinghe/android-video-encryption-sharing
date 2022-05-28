@@ -38,6 +38,8 @@ class _UploadScreenState extends State<UploadScreen> {
   final _form = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _auth = FirebaseAuth.instance;
+  String? fileName;
+  String? error;
 
 
 
@@ -46,7 +48,11 @@ class _UploadScreenState extends State<UploadScreen> {
 
   @override
   Widget build(BuildContext context) {
-   final fileName = file!= null ? basename(file!.path) : 'No File Selected';
+    setState(() {
+      fileName = file!= null ? basename(file!.path) : 'No File Selected';
+    });
+
+
     requestStoragePermission();
     return Scaffold(
       key: _scaffoldKey,
@@ -125,8 +131,15 @@ class _UploadScreenState extends State<UploadScreen> {
                                   kPrimaryColor))),
                     ),
                     SizedBox(height: 8.h),
+                    error != null? Text(error!,
+                      style: TextStyle(
+                          color: Colors.red,
+                          fontFamily: 'InriaSans',
+                          fontWeight: FontWeight.normal,
+                          fontSize: 12.sp),
+                    ):Container(),
                     Text(
-                      fileName,
+                      fileName!,
                       style: TextStyle(
                           color: kPrimaryColor,
                           fontFamily: 'InriaSans',
@@ -139,7 +152,10 @@ class _UploadScreenState extends State<UploadScreen> {
                           vertical: 5.h, horizontal: 40.w),
                       child: TextButton(
                           onPressed: () {
-                                  uploadFile();
+
+                              uploadFile(context);
+
+
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
@@ -166,6 +182,7 @@ class _UploadScreenState extends State<UploadScreen> {
                               backgroundColor: MaterialStateProperty.all(
                                  kPrimaryColor))),
                     ),
+                    task != null ? buildUploadStatus(task!) : Container(),
                     SizedBox(
                       height: 250.h,
                       width: 250.w,
@@ -173,7 +190,7 @@ class _UploadScreenState extends State<UploadScreen> {
                         'assets/images/img.png',
                       ),
                     ),
-                    task != null ? buildUploadStatus(task!) : Container(),
+
 
                   ],
                 )),
@@ -198,11 +215,12 @@ class _UploadScreenState extends State<UploadScreen> {
   //description
   Widget _buildDescription(){
     return InputField(
-      function: Validator.videoValidate,
+
       textAlign: TextAlign.center,
       icon: Icons.description_rounded,
       controller: descriptionController,
       text: 'Video Description',
+      function: Validator.videoValidate,
       textInputType: TextInputType.text,
     );
   }
@@ -254,44 +272,50 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   //upload the video
-  Future uploadFile() async {
+  Future uploadFile(context) async {
 
+    if(_form.currentState!.validate()) {
 
-    if (file == null) return;
-    final fileName = basename(file!.path);
+      if(fileName == 'No File Selected'){
+        setState(() {
+          error = 'Please select the video.';
+        });
 
-    final destination = 'files/$fileName.aes';
-    await file!.readAsBytes().then(
-            (value) => bytes = Uint8List.fromList(value));
+      }else{
+        if (file == null) return;
+        final fileName = basename(file!.path);
 
-    task = FirebaseApi.uploadBytes(destination,bytes!);
+        final destination = 'files/$fileName.aes';
+        await file!.readAsBytes().then(
+                (value) => bytes = Uint8List.fromList(value));
 
-    //task = FirebaseApi.uploadFile(destination, file!);
+        task = FirebaseApi.uploadBytes(destination,bytes!);
 
-    if (task == null) return;
+        //task = FirebaseApi.uploadFile(destination, file!);
 
-    final snapshot = await task!.whenComplete(() {
-            return Fluttertoast.showToast(
-              msg: "Complete",
-              toastLength: Toast.LENGTH_LONG
-            );
-          });
-    final urlDownload = await snapshot.ref.getDownloadURL();
-    CreateAccDetails createAccDetails = CreateAccDetails();
+        if (task == null) return;
 
+        final snapshot = await task!.whenComplete(() {
+                return Fluttertoast.showToast(
+                  msg: "Complete",
+                  toastLength: Toast.LENGTH_LONG
+                );
+              });
+        final urlDownload = await snapshot.ref.getDownloadURL();
+        CreateAccDetails createAccDetails = CreateAccDetails();
 
+        User? user = _auth.currentUser;
+        print(user!.uid);
+        await sendVideo(user.uid, urlDownload);
+        print('Download-Link: $urlDownload');
+        Fluttertoast.showToast(msg: "uploaded successfully.").whenComplete(() =>
+            Navigator.of(context).pushReplacementNamed(UploadScreen.routeName));
 
-
-
-    User? user = _auth.currentUser;
-    print(user!.uid);
-    await sendVideo(user.uid, urlDownload);
-
-    Fluttertoast.showToast(msg: "uploaded successfully.");
-
-
-    print('Download-Link: $urlDownload');
+      }
+    }
   }
+
+
 
   Future<String> sendVideo(id ,urlDownload) async{
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
