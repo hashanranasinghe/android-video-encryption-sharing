@@ -40,6 +40,7 @@ class _UploadScreenState extends State<UploadScreen> {
   final _auth = FirebaseAuth.instance;
   String? fileName;
   String? error;
+  bool isUploading = false;
 
 
 
@@ -162,7 +163,26 @@ class _UploadScreenState extends State<UploadScreen> {
                                 vertical: 6.h, horizontal: 6.w),
                             width: double.infinity,
                             child: Center(
-                              child: Text(
+                              child: isUploading? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20.w,
+                                    height: 20.w,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(width: 24.w),
+                                  Text('Please wait...',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'InriaSans',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17.sp),)
+                                ],
+                              )
+                              :Text(
                                 'Upload',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -282,6 +302,10 @@ class _UploadScreenState extends State<UploadScreen> {
         });
 
       }else{
+        if(isUploading) return;
+        setState(() {
+          isUploading =true;
+        });
         if (file == null) return;
         final fileName = basename(file!.path);
 
@@ -308,9 +332,13 @@ class _UploadScreenState extends State<UploadScreen> {
         print(user!.uid);
         await sendVideo(user.uid, urlDownload);
         print('Download-Link: $urlDownload');
+        // await Future.delayed(Duration(seconds: 5));
+        setState(() {
+          isUploading = false;
+        });
         Fluttertoast.showToast(msg: "uploaded successfully.").whenComplete(() =>
-            Navigator.of(context).pushReplacementNamed(UploadScreen.routeName));
-
+            Navigator.of(context).pushReplacementNamed(UploadScreen.routeName)
+            );
       }
     }
   }

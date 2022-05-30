@@ -45,12 +45,13 @@ class FirebaseApi {
   }
 
   //downloading
-  static getNormalFile(Directory d,fileName,file) async{
+  static Future<DownloadTask?> getNormalFile(Directory d,fileName,file) async{
     Uint8List encData = await _readData(fileName);
     var plainData = await decryptedData(encData);
     var last = getExtension(fileName);
     print('$last');
     String p = await _writeData(plainData,d.path + '/$file' + last);
+    return null;
 
   }
   static getExtension(fileName){
