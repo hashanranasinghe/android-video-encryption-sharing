@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import '../models/share_video.dart';
 import '../widgets/constants.dart';
 import '../widgets/drawer_widget.dart';
@@ -64,13 +65,22 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
                           child: const CircularProgressIndicator(
                             color: kPrimaryColor,
                           ),),)
-                          : ListView.builder(
+                          :_videoList.isNotEmpty? ListView.builder(
                         itemCount: _videoList.length,
                         itemBuilder: (context, index) {
                           return ShareVideoCard(_videoList[index] as ShareVideo,index);
                         },
+                      ):Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.network('https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
+                          repeat: true,),
+                          SizedBox(
+                            height: 100.h,
+                          )
+                        ],
                       ),
-                    ),
+                      ),
                   ],
                 ),
     );
@@ -88,6 +98,7 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
     setState(() {
       _videoList= List.from(data.docs.map((doc) => ShareVideo.fromMap(doc)));
       isLoading = false;
+      print(_videoList.length);
     });
   }
 }

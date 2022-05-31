@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:string_extensions/string_extensions.dart';
 import '../models/provider.dart';
@@ -88,10 +89,8 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                   }
 
                   return Expanded(
-
                       child: (video.vName== null||video.vName == '')?
-
-
+                      snapshot.data!.docs.isNotEmpty?
                       ListView.builder(
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
@@ -110,9 +109,19 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                                       });
                                     })
                             );}
+                      ):Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.network('https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
+                            repeat: true,),
+                          SizedBox(
+                            height: 100.h,
+                          )
+                        ],
                       )
 
-                          :ListView(
+                          :snapshot.data!.docs.isNotEmpty?
+                      ListView(
                         children: snapshot.data!.docs.map((doc) {
                           final dynamic data = doc.data();
                           return Visibility(
@@ -144,6 +153,15 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                           );
 
                         }).toList(),
+                      ):Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.network('https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
+                            repeat: true,),
+                          SizedBox(
+                            height: 100.h,
+                          )
+                        ],
                       )
                   );
                 })

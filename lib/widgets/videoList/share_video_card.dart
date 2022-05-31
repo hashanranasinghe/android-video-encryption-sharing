@@ -141,11 +141,6 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
         .collection('share')
         .get();
 
-    // print(data.docs[index].id);
-
-    // String Url = _uploadVideo.videoUrl.toString();
-    // FirebaseStorage.instance.refFromURL(Url).delete();
-
     await FirebaseFirestore.instance.collection("users").doc(uid)
         .collection("share").doc(data.docs[index].id)
         .delete().whenComplete(() =>

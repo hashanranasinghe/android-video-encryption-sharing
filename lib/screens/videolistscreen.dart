@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import '../widgets/constants.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/topscreen.dart';
@@ -66,13 +67,22 @@ class _VideoListScreenState extends State<VideoListScreen> {
                           child: const CircularProgressIndicator(
                             color: kPrimaryColor,
                           ),),)
-                      : ListView.builder(
+                      : _videoList.isNotEmpty ?ListView.builder(
                         itemCount: _videoList.length,
                         itemBuilder: (context, index) {
                          print(index);
                          return VideoCard(_videoList[index] as UploadVideo,index);
                         },
-                      ),
+                      ):Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.network('https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
+                          repeat: true,),
+                        SizedBox(
+                          height: 100.h,
+                        )
+                      ],
+                    ),
                     ),
 
                   ],
