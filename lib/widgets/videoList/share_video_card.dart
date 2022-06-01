@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import '../../api/firebaseapi.dart';
 import '../../models/provider.dart';
 import '../constants.dart';
+import '../details_dialog.dart';
 import '../dialog_box.dart';
 import 'card_field.dart';
 import 'package:string_extensions/string_extensions.dart';
@@ -32,6 +33,7 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
   final _auth = FirebaseAuth.instance;
   late AnimationController controller;
   bool isLoading = false;
+  bool isDownloading = false;
 
 
 
@@ -104,19 +106,52 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
         deleteVideo(widget.index,context);
       });
 
-    },): Container();
+    },
+      detailsFunction: (){
+        DetailsDialog.builtDetailsDialog(context,widget._shareVideo.videoName.capitalize,FirebaseApi.getExtension(widget._shareVideo.videoUrl) , widget._shareVideo.videoDes.capitalize);
+
+      },
+    ): Container();
 
   }
 
   Future downloadShareVideo(context) async{
+    _buildDownloadAnimation(context);
     Directory d = await getExternalVisibleDir;
     await FirebaseApi.getNormalFile(d,widget._shareVideo.videoUrl,widget._shareVideo.videoName);
-    // final snackBar = SnackBar(
-    //   content: Text('Downloaded ${widget._shareVideo.videoName}'),
-    // );
-    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
+    setState(() {
+      isDownloading =true;
+    });
+    if(isDownloading ==true){
+      Navigator.pop(context);
+    }
   }
+
+  void _buildDownloadAnimation(context) => showDialog(
+      barrierDismissible: false,
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (context) =>Dialog(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 250.h,
+              width: 250.w,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Lottie.network('https://assets1.lottiefiles.com/packages/lf20_PLfxP8.json',
+                    repeat: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ));
 
   Future checkUrl() async {
     final response = await http.get(Uri.parse(widget._shareVideo.videoUrl.toString()));

@@ -1,6 +1,7 @@
 import 'package:app/screens/contactlistscreen.dart';
 import 'package:app/screens/favoritecontactlistscreen.dart';
 import 'package:app/screens/loginscreen.dart';
+import 'package:app/screens/profilescreen.dart';
 import 'package:app/screens/sharevideolistscreen.dart';
 import 'package:app/screens/signupscreen.dart';
 import 'package:app/screens/splashscreen.dart';
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
             ContactListScreen.routeName: (ctx) => const ContactListScreen(),
             ShareVideoListScreen.routeName: (ctx) => const ShareVideoListScreen(),
             FavoriteContactListScreen.routeName: (ctx) => const FavoriteContactListScreen(),
+            ProfileScreen.routeName: (ctx) => const ProfileScreen(),
           },
         ),
 

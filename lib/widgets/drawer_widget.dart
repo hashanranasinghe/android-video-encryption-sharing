@@ -1,5 +1,6 @@
 import 'package:app/screens/favoritecontactlistscreen.dart';
 import 'package:app/screens/loginscreen.dart';
+import 'package:app/screens/profilescreen.dart';
 import 'package:app/screens/uploadscreen.dart';
 import 'package:app/screens/videolistscreen.dart';
 import 'package:app/widgets/list_tile_field.dart';
@@ -73,6 +74,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   },
                   icon: Icons.favorite_border,
                   text: 'My Contacts'),
+
+              ListTileField(
+                  function: () {
+                    Navigator.of(context)
+                        .pushNamed(ProfileScreen.routeName);
+                  },
+                  icon: Icons.person_outline_rounded,
+                  text: 'My Profile'),
 
 
               ListTileField(

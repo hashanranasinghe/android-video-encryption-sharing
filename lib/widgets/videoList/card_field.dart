@@ -9,13 +9,15 @@ class CardField extends StatelessWidget {
   final Function downloadFunction;
   final Function shareFunction;
   final Function deleteFunction;
+  final Function detailsFunction;
 
   const CardField({
     Key? key,
     this.textName,
     required this.downloadFunction,
     required this.shareFunction,
-    required this.deleteFunction
+    required this.deleteFunction,
+    required this.detailsFunction
   }) : super(key: key);
 
   @override
@@ -30,6 +32,7 @@ class CardField extends StatelessWidget {
           padding: EdgeInsets.all(20.r),
           child: Column(
             children: [
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -44,6 +47,13 @@ class CardField extends StatelessWidget {
                   ),
                   Row(
                     children: [
+                      IconButton(
+                          onPressed: (){
+                            detailsFunction();
+                          }, icon: const Icon(
+                        Icons.details_rounded,
+                        color: Colors.white,
+                        size: 30,)),
                           IconButton(
                           onPressed: (){
                             shareFunction();

@@ -2,7 +2,6 @@ import 'package:app/models/upload_video.dart';
 import 'package:app/widgets/videoList/video_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
@@ -24,7 +23,6 @@ class _VideoListScreenState extends State<VideoListScreen> {
   final _auth = FirebaseAuth.instance;
   List<Object> _videoList = [];
   bool isLoading = true;
-  var i;
 
 
 
@@ -55,9 +53,6 @@ class _VideoListScreenState extends State<VideoListScreen> {
                           height: 50.h,
                           width: 50.w,
                         )),
-                    //buildHeader(_videoList.length),
-                    //const SizedBox(height: 12),
-
                     Expanded(
                       child: isLoading == true ?
                       Center(
@@ -84,7 +79,6 @@ class _VideoListScreenState extends State<VideoListScreen> {
                       ],
                     ),
                     ),
-
                   ],
                 )
                   );
@@ -106,8 +100,4 @@ class _VideoListScreenState extends State<VideoListScreen> {
     });
 
   }
-
-
-
-
 }

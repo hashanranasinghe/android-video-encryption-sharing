@@ -9,6 +9,7 @@ class InputField extends StatelessWidget {
   final TextInputType textInputType;
   final TextAlign textAlign;
   final Function(String)? function;
+  final String? detail;
 
 
 
@@ -21,6 +22,7 @@ class InputField extends StatelessWidget {
     required this.textInputType,
     required this.textAlign,
     this.function,
+    this.detail,
   }) : super(key: key);
 
   @override
@@ -33,7 +35,6 @@ class InputField extends StatelessWidget {
         validator: (value){
           return function!(value!);
         },
-
         textAlign: textAlign,
         decoration: InputDecoration(
           prefixIcon: Icon(icon,color: kPrimaryColor,),
