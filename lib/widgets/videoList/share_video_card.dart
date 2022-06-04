@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:app/models/share_video.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'package:app/screens/favoritecontactlistscreen.dart';
 import 'package:app/screens/sharevideolistscreen.dart';
@@ -15,6 +16,7 @@ import '../../models/provider.dart';
 import '../constants.dart';
 import '../details_dialog.dart';
 import '../dialog_box.dart';
+import '../show_custom_snackbar.dart';
 import 'card_field.dart';
 import 'package:string_extensions/string_extensions.dart';
 
@@ -37,27 +39,28 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
 
 
 
-  @override
-  void initState(){
-    // TODO: implement initState
-    checkUrl();
-    super.initState();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    SchedulerBinding.instance?.addPostFrameCallback((_) => _buildCheckAnimation(context));
+    checkUrl(context);
+
+    super.initState();
 
 
     controller = AnimationController(
         duration: Duration(seconds: 3),
         vsync: this);
-    controller.addStatusListener((status) async{
-      if(status == AnimationStatus.completed){
+    controller.addStatusListener((status) async {
+      if (status == AnimationStatus.completed) {
         Navigator.pop(context);
         controller.reset();
       }
-
-
     });
-
   }
+
+
   @override
   void dispose() {
 
@@ -74,15 +77,7 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
     CardField(
         textName: "${widget._shareVideo.videoName}${FirebaseApi.getExtension(widget._shareVideo.videoUrl)}",
         downloadFunction: () async{
-          DialogBox.dialogBox(
-              "Do you really want to download ${widget._shareVideo.videoName.capitalize}${FirebaseApi.getExtension(widget._shareVideo.videoUrl)}?"
-              , context
-              , () {
                 downloadShareVideo(context).whenComplete(() => _buildDoneAnimation(context));
-              });
-
-
-
 
         },
         shareFunction:(){
@@ -111,7 +106,7 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
         DetailsDialog.builtDetailsDialog(context,widget._shareVideo.videoName.capitalize,FirebaseApi.getExtension(widget._shareVideo.videoUrl) , widget._shareVideo.videoDes.capitalize);
 
       },
-    ): Container();
+    ):Container();
 
   }
 
@@ -125,6 +120,9 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
     if(isDownloading ==true){
       Navigator.pop(context);
     }
+
+    String msg = 'Download ${widget._shareVideo.videoName.capitalize}${FirebaseApi.getExtension(widget._shareVideo.videoUrl)}';
+    CustomSnackBar.showCustomSnackBar(context,msg);
   }
 
   void _buildDownloadAnimation(context) => showDialog(
@@ -153,19 +151,77 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
         ),
       ));
 
-  Future checkUrl() async {
+  Future checkUrl(BuildContext context) async {
+
+
     final response = await http.get(Uri.parse(widget._shareVideo.videoUrl.toString()));
     if(response.statusCode == 200){
       setState(() {
         isLoading = true;
       });
+
+    }else{
+      User? user = _auth.currentUser;
+      final uid = user!.uid;
+
+      CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('users').doc(uid).collection('share');
+
+      // Get docs from collection reference
+      QuerySnapshot querySnapshot = await _collectionRef.get();
+
+      var vId = querySnapshot.docs[widget.index].reference.id.toString();
+
+      // delete the document
+
+      var data = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('share');
+      data.doc(vId).delete();
+      String? msg = '${widget._shareVideo.videoName.capitalize}${FirebaseApi.getExtension(widget._shareVideo.videoUrl)} is deleted by owner';
+      CustomSnackBar.showCustomSnackBar(context, msg);
+      Navigator.pop(context);
+      print(vId);
+
+    }
+    if(isLoading == true){
+      Navigator.pop(context);
     }
   }
 
-  Future<Directory?> get getAppDir async{
-    final appDocDir = await getExternalStorageDirectory();
-    return appDocDir;
+  void _buildCheckAnimation(context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        barrierColor: Colors.transparent,
+        builder: (context) {
+            return Dialog(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 250.h,
+                    width: 250.w,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Lottie.network(
+                          'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
+                          repeat: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+        });
   }
+
+
 
   Future deleteVideo(index,context) async{
     User? user = _auth.currentUser;
@@ -180,8 +236,6 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
         .collection("share").doc(data.docs[index].id)
         .delete().whenComplete(() =>
         Navigator.of(context).pushReplacementNamed(ShareVideoListScreen.routeName));
-
-
   }
 
   void _buildDoneAnimation(context) => showDialog(
@@ -218,6 +272,13 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
           ],
         ),
       ));
+
+
+
+  Future<Directory?> get getAppDir async{
+    final appDocDir = await getExternalStorageDirectory();
+    return appDocDir;
+  }
 
   Future<Directory> get getExternalVisibleDir async{
     if(await Directory('/storage/emulated/0/SecureVideoFolder').exists()){

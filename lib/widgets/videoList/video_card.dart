@@ -3,6 +3,7 @@ import 'package:app/models/upload_video.dart';
 import 'package:app/screens/favoritecontactlistscreen.dart';
 import 'package:app/widgets/constants.dart';
 import 'package:app/widgets/details_dialog.dart';
+import 'package:app/widgets/show_custom_snackbar.dart';
 import 'package:app/widgets/videoList/card_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -246,8 +247,8 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
     if(isDownloading ==true){
       Navigator.pop(context);
     }
-
-    showCustomSnackBar(context);
+    String msg = 'Download ${widget._uploadVideo.videoName.capitalize}${FirebaseApi.getExtension(widget._uploadVideo.videoUrl)}';
+    CustomSnackBar.showCustomSnackBar(context,msg);
   }
 
 
@@ -305,38 +306,6 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
      return externalDir;
    }
  }
- void showCustomSnackBar(BuildContext context) {
-   final snackBar = SnackBar(
-     content: Row(
-       mainAxisAlignment: MainAxisAlignment.start,
-       children: [
-         Icon(Icons.download_done,size: 30,color: Colors.white,),
-         const SizedBox(width: 16),
-         Expanded(
-           child: Text(
-             'Downloaded ${widget._uploadVideo.videoName.capitalize}${FirebaseApi.getExtension(widget._uploadVideo.videoUrl)}',
-             style: TextStyle(
-                 fontWeight: FontWeight.w500,
-                 color: Colors.white,
-                 fontSize: 15.sp
-             ),
-           ),
-         ),
-       ],
-     ),
-     backgroundColor: kPrimaryColor,
-     duration: Duration(seconds: 3),
-     margin: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-     behavior: SnackBarBehavior.floating,
-     elevation: 10,
-     shape: RoundedRectangleBorder(
-       borderRadius: BorderRadius.circular(10),
-     ),
-   );
-   Scaffold.of(context)
-     ..showSnackBar(snackBar);
- }
-
 
 }
 

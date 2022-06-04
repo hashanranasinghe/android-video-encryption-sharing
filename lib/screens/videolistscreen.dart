@@ -56,12 +56,16 @@ class _VideoListScreenState extends State<VideoListScreen> {
                     Expanded(
                       child: isLoading == true ?
                       Center(
-                        child: Container(
-                          width: 30.w,
-                          height: 30.h,
-                          child: const CircularProgressIndicator(
-                            color: kPrimaryColor,
-                          ),),)
+                        child:
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Lottie.network(
+                                'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
+                                repeat: true,
+                              ),
+                            ],
+                          ),)
                       : _videoList.isNotEmpty ?ListView.builder(
                         itemCount: _videoList.length,
                         itemBuilder: (context, index) {

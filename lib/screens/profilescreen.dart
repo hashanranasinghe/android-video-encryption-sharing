@@ -91,8 +91,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ):Center(
-                child: CircularProgressIndicator(
-                  color: kPrimaryColor,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 200.h,
+                    ),
+                    CircularProgressIndicator(
+                      color: kPrimaryColor,
+                    ),
+                  ],
                 ))
 
         ],
