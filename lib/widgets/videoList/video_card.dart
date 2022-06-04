@@ -10,8 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +20,7 @@ import '../../api/firebaseapi.dart';
 import '../../models/provider.dart';
 import '../../screens/videolistscreen.dart';
 import '../dialog_box_three.dart';
+import 'package:http/http.dart' as http;
 
 class VideoCard extends StatefulWidget {
  final UploadVideo _uploadVideo;
@@ -35,10 +36,14 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
  final _auth = FirebaseAuth.instance;
  late AnimationController controller;
  bool isDownloading = false;
+ String? size;
+ bool isLoading = false;
 
 
  @override
-  void initState() {
+  void initState(){
+   SchedulerBinding.instance?.addPostFrameCallback((_) => _buildCheckAnimation(context));
+    getSize();
     // TODO: implement initState
     super.initState();
 
@@ -62,7 +67,8 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    return CardField(
+    return isLoading != false ?
+    CardField(
       textName: "${widget._uploadVideo.videoName}${FirebaseApi.getExtension(widget._uploadVideo.videoUrl)}",
         downloadFunction: () async{
 
@@ -74,6 +80,7 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
         shareFunction:(){
                         Navigator.of(context).pushNamed(FavoriteContactListScreen.routeName);
                         Provider.of<ShareData>(context,listen: false).sharingData(
+                            widget._uploadVideo.videoOwner.toString(),
                             widget._uploadVideo.videoName.toString(),
                             widget._uploadVideo.videoDes.toString(),
                             widget._uploadVideo.videoUrl.toString());
@@ -96,13 +103,14 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
     },
       detailsFunction: (){
 
-        DetailsDialog.builtDetailsDialog(context,
+        DetailsDialog.builtDetailsDialog(context,null,
             widget._uploadVideo.videoName.capitalize,
             FirebaseApi.getExtension(widget._uploadVideo.videoUrl) ,
-            widget._uploadVideo.videoDes.capitalize);
+            widget._uploadVideo.videoDes.capitalize,size);
+
 
       },
-        );
+        ):Container();
   }
 
   void _buildDoneAnimation(context) { showDialog(
@@ -227,8 +235,6 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
            ),
          )
        ],
-
-
      ),
    ),
 
@@ -306,6 +312,52 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
      return externalDir;
    }
  }
+ Future<void> getSize() async {
+   http.Response r = await http.get(Uri.parse(widget._uploadVideo.videoUrl.toString()));
+   var file_size = r.headers["content-length"];
+   var s = int.parse(file_size!)/1000000;
+   setState(() {
+     size =s.toStringAsFixed(2).toString();
+     isLoading = true;
+   });
+   if(isLoading == true){
+     Navigator.pop(context);
+   }
+   print(file_size);
+   print(s.toStringAsFixed(2));
+
+ }
+ void _buildCheckAnimation(context) {
+   showDialog(
+       barrierDismissible: false,
+       context: context,
+       barrierColor: Colors.transparent,
+       builder: (context) {
+         return Dialog(
+           elevation: 0,
+           backgroundColor: Colors.transparent,
+           child: Column(
+             mainAxisAlignment: MainAxisAlignment.center,
+             children: [
+               SizedBox(
+                 height: 250.h,
+                 width: 250.w,
+                 child: Column(
+                   mainAxisSize: MainAxisSize.min,
+                   children: [
+                     Lottie.network(
+                       'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
+                       repeat: true,
+                     ),
+                   ],
+                 ),
+               ),
+             ],
+           ),
+         );
+       });
+ }
+
 
 }
 

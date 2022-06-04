@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'constants.dart';
 
 class DetailsDialog{
-  static builtDetailsDialog(context,vName,vEx,vDes)=> showDialog(
+  static builtDetailsDialog(context,vOwner,vName,vEx,vDes,vSize)=> showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) => Dialog(
@@ -12,7 +12,7 @@ class DetailsDialog{
         shape: RoundedRectangleBorder(
             borderRadius:BorderRadius.circular(10.0)),
         child: Container(
-          height: 250.0,
+          height: 350.0,
           width: 300.0,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -48,6 +48,23 @@ class DetailsDialog{
                       color: Colors.white,
                       fontSize: 20.sp
                   ),),),
+              vOwner != null?
+              Padding(
+                padding:  EdgeInsets.all(15.0),
+                child: Text('Video Owner: ${vOwner}',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20.sp
+                  ),),): Container(),
+              Padding(
+                padding:  EdgeInsets.all(15.0),
+                child: Text('Video Size: ${vSize}MB',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20.sp
+                  ),),),
               Padding(
                 padding:  EdgeInsets.only(left: 15,right: 15,top: 10),
                 child: Row(
@@ -66,7 +83,7 @@ class DetailsDialog{
                       ),)),
                   ],
                 ),
-              )
+              ),
             ],
 
 

@@ -36,6 +36,8 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
   late AnimationController controller;
   bool isLoading = false;
   bool isDownloading = false;
+  String? size;
+
 
 
 
@@ -44,6 +46,7 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
   void initState() {
     // TODO: implement initState
     SchedulerBinding.instance?.addPostFrameCallback((_) => _buildCheckAnimation(context));
+    getSize();
     checkUrl(context);
 
     super.initState();
@@ -83,6 +86,7 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
         shareFunction:(){
           Navigator.of(context).pushNamed(FavoriteContactListScreen.routeName);
           Provider.of<ShareData>(context,listen: false).sharingData(
+              widget._shareVideo.videoOwner.toString(),
               widget._shareVideo.videoName.toString(),
               widget._shareVideo.videoDes.toString(),
               widget._shareVideo.videoUrl.toString());
@@ -103,7 +107,7 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
 
     },
       detailsFunction: (){
-        DetailsDialog.builtDetailsDialog(context,widget._shareVideo.videoName.capitalize,FirebaseApi.getExtension(widget._shareVideo.videoUrl) , widget._shareVideo.videoDes.capitalize);
+        DetailsDialog.builtDetailsDialog(context,widget._shareVideo.videoOwner,widget._shareVideo.videoName.capitalize,FirebaseApi.getExtension(widget._shareVideo.videoUrl) , widget._shareVideo.videoDes.capitalize,size);
 
       },
     ):Container();
@@ -291,5 +295,18 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
       return externalDir;
     }
   }
+  Future<void> getSize() async {
+    http.Response r = await http.get(Uri.parse(widget._shareVideo.videoUrl.toString()));
+    var file_size = r.headers["content-length"];
+    var s = int.parse(file_size!)/1000000;
+
+    setState(() {
+      size = s.toStringAsFixed(2).toString();
+    });
+
+
+  }
+
+
 }
 

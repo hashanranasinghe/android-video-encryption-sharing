@@ -54,7 +54,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 200.h,
+                  height: 160.h,
+                ),
+                Text('My Profile',style:
+                TextStyle(
+                    color: kPrimaryColor,
+                    fontSize: 20.sp,
+                    fontFamily: 'InriaSans',
+                    fontWeight: FontWeight.bold
+                ),),
+                SizedBox(
+                  height: 20.h,
                 ),
                 _buildName(),
                 _buildEmail(),

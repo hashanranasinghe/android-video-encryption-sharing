@@ -41,11 +41,21 @@ class _UploadScreenState extends State<UploadScreen> {
   String? fileName;
   String? error;
   bool isUploading = false;
+  final userCollection = FirebaseFirestore.instance.collection('users');
+  String? detailName;
+  String? detailEmail;
 
 
 
   TextEditingController videoNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getCurrentUser();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -351,6 +361,7 @@ class _UploadScreenState extends State<UploadScreen> {
     UploadVideo uploadVideo = UploadVideo();
 
     //writing all values
+    uploadVideo.videoOwner = detailName;
     uploadVideo.videoName = videoNameController.text;
     uploadVideo.videoDes = descriptionController.text;
     uploadVideo.videoUrl = urlDownload;
@@ -380,6 +391,19 @@ class _UploadScreenState extends State<UploadScreen> {
       }
     },
   );
+
+  Future getCurrentUser() async{
+    User? user = _auth.currentUser;
+    final uid = user!.uid;
+    DocumentSnapshot documentSnapshot =await userCollection.doc(uid).get();
+    String userName = documentSnapshot.get('userName');
+    String email = documentSnapshot.get('email');
+    setState(() {
+      detailName = userName;
+      detailEmail = email;
+    });
+    return [userName , email];
+  }
 
 }
 
