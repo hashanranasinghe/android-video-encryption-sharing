@@ -1,12 +1,9 @@
 import 'dart:async';
-
 import 'package:app/screens/uploadscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'loginscreen.dart';
-
 
 String? finalEmail;
 

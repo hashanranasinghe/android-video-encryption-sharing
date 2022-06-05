@@ -357,7 +357,5 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin{
          );
        });
  }
-
-
 }
 

@@ -14,7 +14,6 @@ import '../widgets/topscreen.dart';
 
 String? finalEmail;
 
-
 class ContactListScreen extends StatefulWidget {
 
   const ContactListScreen({Key? key}) : super(key: key);
@@ -27,10 +26,6 @@ class ContactListScreen extends StatefulWidget {
 class _ContactListScreenState extends State<ContactListScreen> {
   String? name = '';
   List contact = [];
-
-
-
-
 
   @override
   void initState() {
@@ -55,19 +50,8 @@ class _ContactListScreenState extends State<ContactListScreen> {
   String? cid;
   final _auth = FirebaseAuth.instance;
 
-
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
-
-
-
-
         return Scaffold(
           key: _scaffoldKey,
           resizeToAvoidBottomInset: false,
@@ -131,8 +115,6 @@ class _ContactListScreenState extends State<ContactListScreen> {
                                     print(user!.uid);
                                     favoriteContact(data['uid'].toString(),data['userName'].toString(),
                                         data['email'].toString());
-
-
                                   });
 
                                 })
@@ -147,9 +129,6 @@ class _ContactListScreenState extends State<ContactListScreen> {
             ],
           ),
         );
-
-
-
   }
 
   Future getUsersContactList() async{

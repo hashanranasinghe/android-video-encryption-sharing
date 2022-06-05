@@ -38,10 +38,6 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
   bool isDownloading = false;
   String? size;
 
-
-
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -303,10 +299,6 @@ class _ShareVideoCardState extends State<ShareVideoCard> with SingleTickerProvid
     setState(() {
       size = s.toStringAsFixed(2).toString();
     });
-
-
   }
-
-
 }
 

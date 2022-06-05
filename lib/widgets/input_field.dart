@@ -11,9 +11,6 @@ class InputField extends StatelessWidget {
   final Function(String)? function;
   final String? detail;
 
-
-
-
   const InputField({
     Key? key,
     required this.controller,

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 import '../models/share_video.dart';
-import '../widgets/constants.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/videoList/share_video_card.dart';
 import '../widgets/topscreen.dart';
@@ -18,9 +17,6 @@ class ShareVideoListScreen extends StatefulWidget {
 }
 
 class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
-
-
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _auth = FirebaseAuth.instance;
   List<Object> _videoList = [];

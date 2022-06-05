@@ -142,8 +142,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-
-
   Future getCurrentUser() async{
     User? user = _auth.currentUser;
     final uid = user!.uid;

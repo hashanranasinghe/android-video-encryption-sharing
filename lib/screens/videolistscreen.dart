@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
-import '../widgets/constants.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/topscreen.dart';
 
@@ -23,8 +22,6 @@ class _VideoListScreenState extends State<VideoListScreen> {
   final _auth = FirebaseAuth.instance;
   List<Object> _videoList = [];
   bool isLoading = true;
-
-
 
   @override
   void didChangeDependencies() {
