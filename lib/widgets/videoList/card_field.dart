@@ -10,19 +10,19 @@ class CardField extends StatelessWidget {
   final Function deleteFunction;
   final Function detailsFunction;
 
-  const CardField({
-    Key? key,
-    this.textName,
-    required this.downloadFunction,
-    required this.shareFunction,
-    required this.deleteFunction,
-    required this.detailsFunction
-  }) : super(key: key);
+  const CardField(
+      {Key? key,
+      this.textName,
+      required this.downloadFunction,
+      required this.shareFunction,
+      required this.deleteFunction,
+      required this.detailsFunction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 10,right: 10,bottom: 10).r,
+      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10).r,
       child: Card(
         elevation: 8,
         shadowColor: kPrimaryLightColor,
@@ -31,50 +31,60 @@ class CardField extends StatelessWidget {
           padding: EdgeInsets.all(20.r),
           child: Column(
             children: [
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(bottom: 10.r),
-                    child: Text(textName.capitalize!,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20.sp
-                    ),),
+                    child: Text(
+                      textName.capitalize!,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20.sp),
+                    ),
                   ),
                   Row(
                     children: [
                       IconButton(
-                          onPressed: (){
+                          onPressed: () {
                             detailsFunction();
-                          }, icon: const Icon(
-                        Icons.details_rounded,
-                        color: Colors.white,
-                        size: 30,)),
-                          IconButton(
-                          onPressed: (){
+                          },
+                          icon: const Icon(
+                            Icons.details_rounded,
+                            color: Colors.white,
+                            size: 30,
+                          )),
+                      IconButton(
+                          onPressed: () {
                             shareFunction();
-                          }, icon: const Icon(
+                          },
+                          icon: const Icon(
                             Icons.share_rounded,
                             color: Colors.white,
-                            size: 30,)),
-                      IconButton(onPressed: () {
-                        downloadFunction();
-                      }, icon: const Icon(
-                        Icons.download_rounded,
-                        color: Colors.white,
-                        size: 30,),
+                            size: 30,
+                          )),
+                      IconButton(
+                        onPressed: () {
+                          downloadFunction();
+                        },
+                        icon: const Icon(
+                          Icons.download_rounded,
+                          color: Colors.white,
+                          size: 30,
+                        ),
                       ),
-                      IconButton(onPressed: () {
-                        deleteFunction();
-                      }, icon: const Icon(
-                        Icons.delete_rounded,
-                        color: Colors.white,
-                        size: 30,),
+                      IconButton(
+                        onPressed: () {
+                          deleteFunction();
+                        },
+                        icon: const Icon(
+                          Icons.delete_rounded,
+                          color: Colors.white,
+                          size: 30,
+                        ),
                       ),
-                        ],
+                    ],
                   ),
                 ],
               ),

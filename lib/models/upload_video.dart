@@ -6,22 +6,25 @@ class UploadVideo {
   String? videoUrl;
 
   UploadVideo(
-      {this.uid,this.videoOwner,this.videoName,this.videoDes,this.videoUrl});
+      {this.uid,
+      this.videoOwner,
+      this.videoName,
+      this.videoDes,
+      this.videoUrl});
 
   //receiving data from server
-  factory UploadVideo.fromMap(map){
+  factory UploadVideo.fromMap(map) {
     return UploadVideo(
-      uid: map['uid'],
-      videoOwner: map['videoOwner'],
-      videoName: map['videoName'],
-      videoDes: map['videoDes'],
-      videoUrl: map['videoUrl']
-    );
+        uid: map['uid'],
+        videoOwner: map['videoOwner'],
+        videoName: map['videoName'],
+        videoDes: map['videoDes'],
+        videoUrl: map['videoUrl']);
   }
 
   //sending data to server
-  Map <String,dynamic> toMap(){
-    return{
+  Map<String, dynamic> toMap() {
+    return {
       'uid': uid,
       'videoOwner': videoOwner,
       'videoName': videoName,
@@ -29,5 +32,4 @@ class UploadVideo {
       'videoUrl': videoUrl,
     };
   }
-
 }

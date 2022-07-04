@@ -17,7 +17,6 @@ class VideoListScreen extends StatefulWidget {
 }
 
 class _VideoListScreenState extends State<VideoListScreen> {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _auth = FirebaseAuth.instance;
   List<Object> _videoList = [];
@@ -30,62 +29,63 @@ class _VideoListScreenState extends State<VideoListScreen> {
     getUsersVideoList();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
-      drawer: DrawerWidget(
-        scaffoldKey: _scaffoldKey,
-      ),
-      body:Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TopScreenWidget(
-                        scaffoldKey: _scaffoldKey,
-                        topLeft: SizedBox(
-                          height: 50.h,
-                          width: 50.w,
-                        )),
-                    Expanded(
-                      child: isLoading == true ?
-                      Center(
-                        child:
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Lottie.network(
-                                'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
-                                repeat: true,
-                              ),
-                            ],
-                          ),)
-                      : _videoList.isNotEmpty ?ListView.builder(
-                        itemCount: _videoList.length,
-                        itemBuilder: (context, index) {
-                         print(index);
-                         return VideoCard(_videoList[index] as UploadVideo,index);
-                        },
-                      ):Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Lottie.network('https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
-                          repeat: true,),
-                        SizedBox(
-                          height: 100.h,
+        key: _scaffoldKey,
+        resizeToAvoidBottomInset: false,
+        drawer: DrawerWidget(
+          scaffoldKey: _scaffoldKey,
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TopScreenWidget(
+                scaffoldKey: _scaffoldKey,
+                topLeft: SizedBox(
+                  height: 50.h,
+                  width: 50.w,
+                )),
+            Expanded(
+              child: isLoading == true
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Lottie.network(
+                            'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
+                            repeat: true,
+                          ),
+                        ],
+                      ),
+                    )
+                  : _videoList.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: _videoList.length,
+                          itemBuilder: (context, index) {
+                            print(index);
+                            return VideoCard(
+                                _videoList[index] as UploadVideo, index);
+                          },
                         )
-                      ],
-                    ),
-                    ),
-                  ],
-                )
-                  );
-          }
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.network(
+                              'https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
+                              repeat: true,
+                            ),
+                            SizedBox(
+                              height: 100.h,
+                            )
+                          ],
+                        ),
+            ),
+          ],
+        ));
+  }
 
-  Future getUsersVideoList() async{
+  Future getUsersVideoList() async {
     User? user = _auth.currentUser;
     final uid = user!.uid;
     var data = await FirebaseFirestore.instance
@@ -95,10 +95,8 @@ class _VideoListScreenState extends State<VideoListScreen> {
         .get();
 
     setState(() {
-      _videoList= List.from(data.docs.map((doc) => UploadVideo.fromMap(doc)));
-       isLoading = false;
-
+      _videoList = List.from(data.docs.map((doc) => UploadVideo.fromMap(doc)));
+      isLoading = false;
     });
-
   }
 }

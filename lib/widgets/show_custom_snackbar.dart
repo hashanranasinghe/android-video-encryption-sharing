@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'constants.dart';
 
-class CustomSnackBar{
-  static showCustomSnackBar(BuildContext context,text) {
+class CustomSnackBar {
+  static showCustomSnackBar(BuildContext context, text) {
     final snackBar = SnackBar(
       content: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(Icons.download_done,size: 30,color: Colors.white,),
+          Icon(
+            Icons.download_done,
+            size: 30,
+            color: Colors.white,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
@@ -16,8 +20,7 @@ class CustomSnackBar{
               style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
-                  fontSize: 15.sp
-              ),
+                  fontSize: 15.sp),
             ),
           ),
         ],
@@ -31,8 +34,6 @@ class CustomSnackBar{
         borderRadius: BorderRadius.circular(10),
       ),
     );
-    Scaffold.of(context)
-      ..showSnackBar(snackBar);
+    Scaffold.of(context)..showSnackBar(snackBar);
   }
 }
-

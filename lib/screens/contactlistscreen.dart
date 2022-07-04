@@ -15,7 +15,6 @@ import '../widgets/topscreen.dart';
 String? finalEmail;
 
 class ContactListScreen extends StatefulWidget {
-
   const ContactListScreen({Key? key}) : super(key: key);
   static const routeName = 'ContactList screen';
 
@@ -35,15 +34,14 @@ class _ContactListScreenState extends State<ContactListScreen> {
     getEmail();
   }
 
-  Future getEmail() async{
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  Future getEmail() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
     var obtainedEmail = sharedPreferences.getString('email');
     setState(() {
       finalEmail = obtainedEmail;
     });
-
   }
-
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String? id;
@@ -52,86 +50,88 @@ class _ContactListScreenState extends State<ContactListScreen> {
 
   @override
   Widget build(BuildContext context) {
-        return Scaffold(
-          key: _scaffoldKey,
-          resizeToAvoidBottomInset: false,
-          drawer: DrawerWidget(
-            scaffoldKey: _scaffoldKey,
+    return Scaffold(
+      key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
+      drawer: DrawerWidget(
+        scaffoldKey: _scaffoldKey,
+      ),
+      body: Column(
+        children: [
+          TopScreenWidget(
+              scaffoldKey: _scaffoldKey,
+              topLeft: SizedBox(
+                height: 50.h,
+                width: 50.w,
+              )),
+          SizedBox(
+            height: 20.h,
           ),
-          body: Column(
-            children: [
-              TopScreenWidget(
-                  scaffoldKey: _scaffoldKey,
-                  topLeft: SizedBox(
-                    height: 50.h,
-                    width: 50.w,
-                  )),
-              SizedBox(
-                height: 20.h,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: _buildSearchBar()),
-              StreamBuilder(
-                stream: (name!= ''&& name != null)?
-                    FirebaseFirestore.instance.collection('users')
-                        .where('userName',isGreaterThanOrEqualTo:name)
-                        .orderBy("userName",descending: false)
-                        .startAt([name,])
-                        .endAt([name! + '\uf8ff',])
-                        .snapshots()
-                :FirebaseFirestore.instance.collection('users').orderBy('userName',descending: false)
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: _buildSearchBar()),
+          StreamBuilder(
+            stream: (name != '' && name != null)
+                ? FirebaseFirestore.instance
+                    .collection('users')
+                    .where('userName', isGreaterThanOrEqualTo: name)
+                    .orderBy("userName", descending: false)
+                    .startAt([
+                    name,
+                  ]).endAt([
+                    name! + '\uf8ff',
+                  ]).snapshots()
+                : FirebaseFirestore.instance
+                    .collection('users')
+                    .orderBy('userName', descending: false)
                     .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (!snapshot.hasData) {
-                    return Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: kPrimaryColor,
-                        ),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: kPrimaryColor,
+                    ),
+                  ),
+                );
+              }
+              return Expanded(
+                  child: ListView(
+                children: snapshot.data!.docs.map((doc) {
+                  final dynamic data = doc.data();
+                  return Visibility(
+                      child: (finalEmail != data['email'])
+                          ? ContactListTileField(
+                              text: data['userName'].toString(),
+                              iconData: Icons.add_circle_outline_rounded,
+                              function: () {
+                                DialogBox.dialogBox(
+                                    "Do you really want to add ${data['userName'].toString()} to my contacts?",
+                                    context, () {
+                                  print(data['uid'].toString());
+                                  print(data['userName'].toString());
+                                  print(data['email'].toString());
 
-                      ),
-                    );
-                  }
-                  return Expanded(
-                    child:ListView(
-                      children: snapshot.data!.docs.map((doc) {
-                        final dynamic data = doc.data();
-                          return Visibility(
-                            child: (finalEmail != data['email'] )?
-                            ContactListTileField(
-                                text: data['userName'].toString(),
-                                iconData: Icons.add_circle_outline_rounded,
-                                function: () {
-                                  DialogBox.dialogBox(
-                                  "Do you really want to add ${data['userName'].toString()} to my contacts?"
-                                  , context, (){
-                                    print(data['uid'].toString());
-                                    print(data['userName'].toString());
-                                    print(data['email'].toString());
-
-                                    User? user = _auth.currentUser;
-                                    print(user!.uid);
-                                    favoriteContact(data['uid'].toString(),data['userName'].toString(),
-                                        data['email'].toString());
-                                  });
-
-                                })
-                                :Container()
-                          );
-
-                      }).toList(),
-                    )
-                  );
-                },
-              ),
-            ],
+                                  User? user = _auth.currentUser;
+                                  print(user!.uid);
+                                  favoriteContact(
+                                      data['uid'].toString(),
+                                      data['userName'].toString(),
+                                      data['email'].toString());
+                                });
+                              })
+                          : Container());
+                }).toList(),
+              ));
+            },
           ),
-        );
+        ],
+      ),
+    );
   }
 
-  Future getUsersContactList() async{
+  Future getUsersContactList() async {
     User? user = _auth.currentUser;
     final uid = user!.uid;
     var data = await FirebaseFirestore.instance
@@ -140,29 +140,27 @@ class _ContactListScreenState extends State<ContactListScreen> {
         .collection('contacts')
         .snapshots();
 
-    CollectionReference _collectionRef =
-    FirebaseFirestore.instance.collection('users').doc(uid).collection('contacts');
+    CollectionReference _collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('contacts');
 
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
 
-      // Get docs from collection reference
-      QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
 
-      // Get data from docs and convert map to List
-      final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    print(allData);
+    setState(() {
+      contact = allData;
+    });
 
-
-      print(allData);
-      setState(() {
-        contact = allData;
-      });
-
-      var c = allData.contains('test2');
-      print(c);
+    var c = allData.contains('test2');
+    print(c);
   }
 
-
-  Future<String> favoriteContact(uid,contactName,contactEmail) async{
-
+  Future<String> favoriteContact(uid, contactName, contactEmail) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     CollectionReference users = firebaseFirestore.collection('users');
     FavoriteContact favoriteContact = FavoriteContact();
@@ -178,10 +176,8 @@ class _ContactListScreenState extends State<ContactListScreen> {
     return "success";
   }
 
-
   Widget _buildSearchBar() {
     return CupertinoSearchTextField(
-
       prefixInsets: EdgeInsets.only(left: 20.r),
       itemSize: 25,
       autofocus: true,
@@ -190,21 +186,13 @@ class _ContactListScreenState extends State<ContactListScreen> {
         setState(() {
           name = value;
           print(name);
-
         });
       },
-      style: TextStyle(
-        fontSize: 20.sp
-      ),
+      style: TextStyle(fontSize: 20.sp),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        color: kPrimaryLightColor,
-        border: Border.all(width: 2.w,color: kPrimaryColor)
-      ),
+          borderRadius: BorderRadius.circular(10.r),
+          color: kPrimaryLightColor,
+          border: Border.all(width: 2.w, color: kPrimaryColor)),
     );
   }
-
-
-
-
 }

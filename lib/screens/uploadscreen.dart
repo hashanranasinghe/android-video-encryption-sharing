@@ -27,7 +27,6 @@ class UploadScreen extends StatefulWidget {
 }
 
 class _UploadScreenState extends State<UploadScreen> {
-
   bool _isGranted = true;
   UploadTask? task;
   File? file;
@@ -45,8 +44,6 @@ class _UploadScreenState extends State<UploadScreen> {
   String? detailName;
   String? detailEmail;
 
-
-
   TextEditingController videoNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
@@ -60,9 +57,8 @@ class _UploadScreenState extends State<UploadScreen> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-      fileName = file!= null ? basename(file!.path) : 'No File Selected';
+      fileName = file != null ? basename(file!.path) : 'No File Selected';
     });
-
 
     requestStoragePermission();
     return Scaffold(
@@ -81,7 +77,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   width: 50.w,
                 )),
             Form(
-              key: _form,
+                key: _form,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -109,12 +105,11 @@ class _UploadScreenState extends State<UploadScreen> {
                       height: 20.h,
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(
-                          vertical: 5.h, horizontal: 40.w),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 5.h, horizontal: 40.w),
                       child: TextButton(
-
                           onPressed: () {
-                              selectFile();
+                            selectFile();
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
@@ -134,21 +129,24 @@ class _UploadScreenState extends State<UploadScreen> {
                           ),
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
+                                      RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(27.r),
-                                  )),
-                              backgroundColor: MaterialStateProperty.all(
-                                  kPrimaryColor))),
+                                borderRadius: BorderRadius.circular(27.r),
+                              )),
+                              backgroundColor:
+                                  MaterialStateProperty.all(kPrimaryColor))),
                     ),
                     SizedBox(height: 8.h),
-                    error != null? Text(error!,
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontFamily: 'InriaSans',
-                          fontWeight: FontWeight.normal,
-                          fontSize: 12.sp),
-                    ):Container(),
+                    error != null
+                        ? Text(
+                            error!,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontFamily: 'InriaSans',
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12.sp),
+                          )
+                        : Container(),
                     Text(
                       fileName!,
                       style: TextStyle(
@@ -159,58 +157,59 @@ class _UploadScreenState extends State<UploadScreen> {
                     ),
                     SizedBox(height: 48.h),
                     Container(
-                      margin: EdgeInsets.symmetric(
-                          vertical: 5.h, horizontal: 40.w),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 5.h, horizontal: 40.w),
                       child: TextButton(
                           onPressed: () {
-
-                              uploadFile(context);
-
-
+                            uploadFile(context);
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 vertical: 6.h, horizontal: 6.w),
                             width: double.infinity,
                             child: Center(
-                              child: isUploading? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 20.w,
-                                    height: 20.w,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
+                              child: isUploading
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 20.w,
+                                          height: 20.w,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(width: 24.w),
+                                        Text(
+                                          'Please wait...',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'InriaSans',
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17.sp),
+                                        )
+                                      ],
+                                    )
+                                  : Text(
+                                      'Upload',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'InriaSans',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17.sp),
                                     ),
-                                  ),
-                                  SizedBox(width: 24.w),
-                                  Text('Please wait...',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'InriaSans',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17.sp),)
-                                ],
-                              )
-                              :Text(
-                                'Upload',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'InriaSans',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17.sp),
-                              ),
                             ),
                           ),
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
+                                      RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(27.r),
-                                  )),
-                              backgroundColor: MaterialStateProperty.all(
-                                 kPrimaryColor))),
+                                borderRadius: BorderRadius.circular(27.r),
+                              )),
+                              backgroundColor:
+                                  MaterialStateProperty.all(kPrimaryColor))),
                     ),
                     task != null ? buildUploadStatus(task!) : Container(),
                     SizedBox(
@@ -220,8 +219,6 @@ class _UploadScreenState extends State<UploadScreen> {
                         'assets/images/img.png',
                       ),
                     ),
-
-
                   ],
                 )),
           ],
@@ -231,21 +228,20 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   //video name
-  Widget _buildVideoName(){
-      return InputField(
-        textAlign: TextAlign.center,
-        icon: Icons.video_collection_rounded,
-        controller: videoNameController,
-        text: 'Video Name',
-        textInputType: TextInputType.emailAddress,
-        function: Validator.videoValidate,
-      );
-    }
+  Widget _buildVideoName() {
+    return InputField(
+      textAlign: TextAlign.center,
+      icon: Icons.video_collection_rounded,
+      controller: videoNameController,
+      text: 'Video Name',
+      textInputType: TextInputType.emailAddress,
+      function: Validator.videoValidate,
+    );
+  }
 
   //description
-  Widget _buildDescription(){
+  Widget _buildDescription() {
     return InputField(
-
       textAlign: TextAlign.center,
       icon: Icons.description_rounded,
       controller: descriptionController,
@@ -256,32 +252,33 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   //requesting storage permission
-  requestStoragePermission() async{
-    if(!(await Permission.storage.isGranted)){
+  requestStoragePermission() async {
+    if (!(await Permission.storage.isGranted)) {
       PermissionStatus result = await Permission.storage.request();
-      if(result.isGranted){
+      if (result.isGranted) {
         setState(() {
           _isGranted = true;
         });
-      }else{
+      } else {
         _isGranted = false;
       }
-    }else if(!(await Permission.accessMediaLocation.isGranted)){
+    } else if (!(await Permission.accessMediaLocation.isGranted)) {
       PermissionStatus result = await Permission.accessMediaLocation.request();
-      if(result.isGranted){
+      if (result.isGranted) {
         setState(() {
           _isGranted = true;
         });
-      }else{
+      } else {
         _isGranted = false;
       }
-    }else if(!(await Permission.manageExternalStorage.isGranted)){
-      PermissionStatus result = await Permission.manageExternalStorage.request();
-      if(result.isGranted){
+    } else if (!(await Permission.manageExternalStorage.isGranted)) {
+      PermissionStatus result =
+          await Permission.manageExternalStorage.request();
+      if (result.isGranted) {
         setState(() {
           _isGranted = true;
         });
-      }else{
+      } else {
         _isGranted = false;
       }
     }
@@ -303,38 +300,34 @@ class _UploadScreenState extends State<UploadScreen> {
 
   //upload the video
   Future uploadFile(context) async {
-
-    if(_form.currentState!.validate()) {
-
-      if(fileName == 'No File Selected'){
+    if (_form.currentState!.validate()) {
+      if (fileName == 'No File Selected') {
         setState(() {
           error = 'Please select the video.';
         });
-
-      }else{
-        if(isUploading) return;
+      } else {
+        if (isUploading) return;
         setState(() {
-          isUploading =true;
+          isUploading = true;
         });
         if (file == null) return;
         final fileName = basename(file!.path);
 
         final destination = 'files/$fileName.aes';
-        await file!.readAsBytes().then(
-                (value) => bytes = Uint8List.fromList(value));
+        await file!
+            .readAsBytes()
+            .then((value) => bytes = Uint8List.fromList(value));
 
-        task = FirebaseApi.uploadBytes(destination,bytes!);
+        task = FirebaseApi.uploadBytes(destination, bytes!);
 
         //task = FirebaseApi.uploadFile(destination, file!);
 
         if (task == null) return;
 
         final snapshot = await task!.whenComplete(() {
-                return Fluttertoast.showToast(
-                  msg: "Complete",
-                  toastLength: Toast.LENGTH_LONG
-                );
-              });
+          return Fluttertoast.showToast(
+              msg: "Complete", toastLength: Toast.LENGTH_LONG);
+        });
         final urlDownload = await snapshot.ref.getDownloadURL();
         CreateAccDetails createAccDetails = CreateAccDetails();
 
@@ -347,15 +340,12 @@ class _UploadScreenState extends State<UploadScreen> {
           isUploading = false;
         });
         Fluttertoast.showToast(msg: "uploaded successfully.").whenComplete(() =>
-            Navigator.of(context).pushReplacementNamed(UploadScreen.routeName)
-            );
+            Navigator.of(context).pushReplacementNamed(UploadScreen.routeName));
       }
     }
   }
 
-
-
-  Future<String> sendVideo(id ,urlDownload) async{
+  Future<String> sendVideo(id, urlDownload) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     CollectionReference users = firebaseFirestore.collection('users');
     UploadVideo uploadVideo = UploadVideo();
@@ -373,37 +363,33 @@ class _UploadScreenState extends State<UploadScreen> {
 
   //uploading percentage it's not work
   Widget buildUploadStatus(UploadTask task) => StreamBuilder<TaskSnapshot>(
+        stream: task.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final snap = snapshot.data!;
+            final progress = snap.bytesTransferred / snap.totalBytes;
+            final percentage = (progress * 100).toStringAsFixed(2);
 
-    stream: task.snapshotEvents,
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        final snap = snapshot.data!;
-        final progress = snap.bytesTransferred / snap.totalBytes;
-        final percentage = (progress * 100).toStringAsFixed(2);
+            return Text(
+              '$percentage %',
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+            );
+          } else {
+            return Container();
+          }
+        },
+      );
 
-        return Text(
-          '$percentage %',
-          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
-        );
-      } else {
-        return Container();
-
-      }
-    },
-  );
-
-  Future getCurrentUser() async{
+  Future getCurrentUser() async {
     User? user = _auth.currentUser;
     final uid = user!.uid;
-    DocumentSnapshot documentSnapshot =await userCollection.doc(uid).get();
+    DocumentSnapshot documentSnapshot = await userCollection.doc(uid).get();
     String userName = documentSnapshot.get('userName');
     String email = documentSnapshot.get('email');
     setState(() {
       detailName = userName;
       detailEmail = email;
     });
-    return [userName , email];
+    return [userName, email];
   }
-
 }
-

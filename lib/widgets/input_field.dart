@@ -29,14 +29,17 @@ class InputField extends StatelessWidget {
         controller: controller,
         keyboardType: textInputType,
         textInputAction: TextInputAction.next,
-        validator: (value){
+        validator: (value) {
           return function!(value!);
         },
         textAlign: textAlign,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon,color: kPrimaryColor,),
+          prefixIcon: Icon(
+            icon,
+            color: kPrimaryColor,
+          ),
           contentPadding: const EdgeInsets.all(5),
-          enabledBorder:  OutlineInputBorder(
+          enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.r),
             borderSide: BorderSide(color: kPrimaryColor, width: 3.0.w),
           ),
@@ -46,16 +49,16 @@ class InputField extends StatelessWidget {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.r),
-            borderSide: BorderSide(color: kErrorColor,width: 3.0.w),
+            borderSide: BorderSide(color: kErrorColor, width: 3.0.w),
           ),
           hintStyle: TextStyle(
-            fontFamily: 'InriaSans',
+              fontFamily: 'InriaSans',
               fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.bold
-          ),
+              fontWeight: FontWeight.bold),
           hintText: text,
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),),
+            borderRadius: BorderRadius.circular(10.r),
+          ),
         ),
       ),
       margin: EdgeInsets.symmetric(vertical: 5.h, horizontal: 40.w),

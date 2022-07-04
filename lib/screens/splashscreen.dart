@@ -16,16 +16,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-
     getValidationData().whenComplete(() async {
       Timer(const Duration(seconds: 3), () {
-          if (finalEmail == null) {
+        if (finalEmail == null) {
           Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
         } else {
           Navigator.of(context).pushReplacementNamed(UploadScreen.routeName);
@@ -34,10 +32,9 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-
-
-  Future getValidationData() async{
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  Future getValidationData() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
     var obtainedEmail = sharedPreferences.getString('email');
     setState(() {
       finalEmail = obtainedEmail;
@@ -47,14 +44,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/splashthree.png'),
-              fit: BoxFit.cover,
-            )
-        ),
+          image: AssetImage('assets/images/splashthree.png'),
+          fit: BoxFit.cover,
+        )),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

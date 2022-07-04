@@ -7,20 +7,22 @@ class ListTileField extends StatelessWidget {
   final String? text;
   final Function function;
 
-  const ListTileField({Key? key,
-    required this.icon,
-    required this.text,
-    required this.function}) : super(key: key);
+  const ListTileField(
+      {Key? key,
+      required this.icon,
+      required this.text,
+      required this.function})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListTile(
-          onTap: (){
-            function();},
-          leading: Icon(icon,
-              color: kPrimaryColor),
+          onTap: () {
+            function();
+          },
+          leading: Icon(icon, color: kPrimaryColor),
           textColor: kPrimaryColor,
           title: Text(
             text!,

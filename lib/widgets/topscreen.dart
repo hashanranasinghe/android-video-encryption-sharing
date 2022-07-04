@@ -5,8 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class TopScreenWidget extends StatelessWidget {
   const TopScreenWidget(
       {Key? key,
-        required GlobalKey<ScaffoldState> scaffoldKey,
-        required this.topLeft})
+      required GlobalKey<ScaffoldState> scaffoldKey,
+      required this.topLeft})
       : _scaffoldKey = scaffoldKey,
         super(key: key);
 
@@ -25,7 +25,10 @@ class TopScreenWidget extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 30, left: 10).r,
               child: IconButton(
-                icon: const Icon(Icons.menu, color: kPrimaryColor,),
+                icon: const Icon(
+                  Icons.menu,
+                  color: kPrimaryColor,
+                ),
                 onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                 iconSize: 30,
               ),

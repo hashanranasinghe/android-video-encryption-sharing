@@ -29,9 +29,7 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
     setState(() {
       getShareVideoList();
     });
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,51 +40,58 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
         scaffoldKey: _scaffoldKey,
       ),
       body: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TopScreenWidget(
-                        scaffoldKey: _scaffoldKey,
-                        topLeft: SizedBox(
-                          height: 50.h,
-                          width: 50.w,
-                        )),
-                    Expanded(
-                      child: isLoading == true ?
-                      Center(
-                        child: Container(
-                          width: 30.w,
-                          height: 30.h,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Lottie.network(
-                                'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
-                                repeat: true,
-                              ),
-                            ],
-                          ),),)
-                          :_videoList.isNotEmpty? ListView.builder(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TopScreenWidget(
+              scaffoldKey: _scaffoldKey,
+              topLeft: SizedBox(
+                height: 50.h,
+                width: 50.w,
+              )),
+          Expanded(
+            child: isLoading == true
+                ? Center(
+                    child: Container(
+                      width: 30.w,
+                      height: 30.h,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Lottie.network(
+                            'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
+                            repeat: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : _videoList.isNotEmpty
+                    ? ListView.builder(
                         itemCount: _videoList.length,
                         itemBuilder: (context, index) {
-                          return ShareVideoCard(_videoList[index] as ShareVideo,index);
+                          return ShareVideoCard(
+                              _videoList[index] as ShareVideo, index);
                         },
-                      ):Column(
+                      )
+                    : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Lottie.network('https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
-                          repeat: true,),
+                          Lottie.network(
+                            'https://assets4.lottiefiles.com/packages/lf20_gzusoplj.json',
+                            repeat: true,
+                          ),
                           SizedBox(
                             height: 100.h,
                           )
                         ],
                       ),
-                      ),
-                  ],
-                ),
+          ),
+        ],
+      ),
     );
   }
 
-  Future getShareVideoList() async{
+  Future getShareVideoList() async {
     User? user = _auth.currentUser;
     final uid = user!.uid;
     var data = await FirebaseFirestore.instance
@@ -96,7 +101,7 @@ class _ShareVideoListScreenState extends State<ShareVideoListScreen> {
         .get();
 
     setState(() {
-      _videoList= List.from(data.docs.map((doc) => ShareVideo.fromMap(doc)));
+      _videoList = List.from(data.docs.map((doc) => ShareVideo.fromMap(doc)));
       isLoading = false;
       print(_videoList.length);
     });
