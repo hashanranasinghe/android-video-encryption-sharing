@@ -6,11 +6,13 @@ import 'package:app/widgets/details_dialog.dart';
 import 'package:app/widgets/show_custom_snackbar.dart';
 import 'package:app/widgets/videoList/card_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:encrypt/encrypt.dart' as enc;
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:encrypt/encrypt.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,7 +22,7 @@ import '../../api/firebaseapi.dart';
 import '../../models/provider.dart';
 import '../../screens/videolistscreen.dart';
 import '../dialog_box_three.dart';
-import 'package:http/http.dart' as http;
+
 
 class VideoCard extends StatefulWidget {
   final UploadVideo _uploadVideo;
@@ -37,13 +39,10 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin {
   late AnimationController controller;
   bool isDownloading = false;
   String? size;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => _buildCheckAnimation(context));
-    getSize();
     // TODO: implement initState
     super.initState();
 
@@ -71,8 +70,11 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin {
             textName:
                 "${widget._uploadVideo.videoName}${FirebaseApi.getExtension(widget._uploadVideo.videoUrl)}",
             downloadFunction: () async {
-              downloadVideo(context, widget._uploadVideo.videoUrl,
-                      widget._uploadVideo.videoName)
+              downloadVideo(
+                      context,
+                      widget._uploadVideo.videoUrl,
+                      widget._uploadVideo.videoName,
+                      widget._uploadVideo.videoKey)
                   .whenComplete(() => _buildDoneAnimation(context));
             },
             shareFunction: () {
@@ -82,11 +84,14 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin {
                   widget._uploadVideo.videoOwner.toString(),
                   widget._uploadVideo.videoName.toString(),
                   widget._uploadVideo.videoDes.toString(),
-                  widget._uploadVideo.videoUrl.toString());
+                  widget._uploadVideo.videoUrl.toString(),
+                  widget._uploadVideo.videoKey.toString(),
+                  widget._uploadVideo.videoSize.toString());
 
               print(Provider.of<ShareData>(context, listen: false).vName);
               print(widget._uploadVideo.videoUrl);
               print(widget._uploadVideo.videoDes);
+              print(widget._uploadVideo.videoKey.toString());
             },
             deleteFunction: () {
               DialogBoxThree.dialogBox(
@@ -104,7 +109,7 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin {
                   widget._uploadVideo.videoName.capitalize,
                   FirebaseApi.getExtension(widget._uploadVideo.videoUrl),
                   widget._uploadVideo.videoDes.capitalize,
-                  size);
+                  widget._uploadVideo.videoSize.toString());
             },
           )
         : Container();
@@ -243,7 +248,20 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin {
             ),
           ));
 
-  Future downloadVideo(context, url, name) async {
+  Future downloadVideo(context, url, name, key) async {
+    print(key);
+
+    final keyT = encrypt.Key.fromUtf8('my 32 length key................');
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(AES(keyT));
+
+    final decrypted = encrypter.decrypt(enc.Encrypted.fromBase64(key), iv: iv);
+    setState(() {
+      Encryption.plainText = decrypted;
+    });
+
+    print(decrypted);
+
     _buildDownloadAnimation(context);
     Directory d = await getExternalVisibleDir;
     await FirebaseApi.getNormalFile(d, url, name);
@@ -319,52 +337,5 @@ class _VideoCardState extends State<VideoCard> with TickerProviderStateMixin {
       final externalDir = Directory('/storage/emulated/0/SecureVideoFolder');
       return externalDir;
     }
-  }
-
-  Future<void> getSize() async {
-    http.Response r =
-        await http.get(Uri.parse(widget._uploadVideo.videoUrl.toString()));
-    var file_size = r.headers["content-length"];
-    var s = int.parse(file_size!) / 1000000;
-    setState(() {
-      size = s.toStringAsFixed(2).toString();
-      isLoading = true;
-    });
-    if (isLoading == true) {
-      Navigator.pop(context);
-    }
-    print(file_size);
-    print(s.toStringAsFixed(2));
-  }
-
-  void _buildCheckAnimation(context) {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        barrierColor: Colors.transparent,
-        builder: (context) {
-          return Dialog(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 250.h,
-                  width: 250.w,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Lottie.network(
-                        'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
-                        repeat: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
   }
 }

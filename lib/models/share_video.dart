@@ -4,13 +4,17 @@ class ShareVideo {
   String? videoName;
   String? videoDes;
   String? videoUrl;
+  String? videoKey;
+  String? videoSize;
 
   ShareVideo(
       {this.uid,
       this.videoOwner,
       this.videoName,
       this.videoDes,
-      this.videoUrl});
+      this.videoUrl,
+      this.videoKey,
+      this.videoSize});
 
   //receiving data from server
   factory ShareVideo.fromMap(map) {
@@ -19,7 +23,9 @@ class ShareVideo {
         videoOwner: map['videoOwner'],
         videoName: map['videoName'],
         videoDes: map['videoDes'],
-        videoUrl: map['videoUrl']);
+        videoUrl: map['videoUrl'],
+        videoKey: map['videoKey'],
+        videoSize: map['videoSize']);
   }
 
   //sending data to server
@@ -30,6 +36,8 @@ class ShareVideo {
       'videoName': videoName,
       'videoDes': videoDes,
       'videoUrl': videoUrl,
+      'videoKey': videoKey,
+      'videoSize': videoSize,
     };
   }
 }

@@ -151,7 +151,9 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                                                       video.vOwner,
                                                       video.vName,
                                                       video.vDes,
-                                                      video.vUrl)
+                                                      video.vUrl,
+                                                      video.vKey,
+                                              video.vSize)
                                                   .whenComplete(() => Navigator
                                                           .of(context)
                                                       .pushNamed(
@@ -218,7 +220,7 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
   }
 
   Future<String> shareVideo(
-      id, videoOwner, videoName, videoDes, urlDownload) async {
+      id, videoOwner, videoName, videoDes, urlDownload, key,size) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     CollectionReference users = firebaseFirestore.collection('users');
     ShareVideo shareVideo = ShareVideo();
@@ -228,6 +230,8 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
     shareVideo.videoName = videoName;
     shareVideo.videoDes = videoDes;
     shareVideo.videoUrl = urlDownload;
+    shareVideo.videoKey = key;
+    shareVideo.videoSize=size;
     shareVideo.uid = id;
 
     users.doc(id).collection('share').add(shareVideo.toMap());

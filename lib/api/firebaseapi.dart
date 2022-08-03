@@ -18,7 +18,7 @@ class FirebaseApi {
 
   //encrypting
   static _encryptedData(data) {
-    print("Encrypting....");
+    print("Encrypting....${Encryption.plainText}");
     final entrypted =
         Encryption.myEncrypter.encryptBytes(data, iv: Encryption.myIv);
     return entrypted.bytes;
@@ -87,7 +87,7 @@ class FirebaseApi {
 
   //decrypting
   static decryptedData(encData) {
-    print('decrypting............');
+    print('decrypting............${Encryption.plainText}');
     enc.Encrypted en = new enc.Encrypted(encData);
     return Encryption.myEncrypter.decryptBytes(en, iv: Encryption.myIv);
   }
@@ -95,7 +95,8 @@ class FirebaseApi {
 
 //encryption class
 class Encryption {
-  static final myKey = enc.Key.fromUtf8('HashanRanasingheHashanRanasinghe');
+  static String? plainText;
+  static final myKey = enc.Key.fromUtf8(plainText.toString());
   static final myIv = enc.IV.fromUtf8('SabraSabra202022');
   static final myEncrypter = enc.Encrypter(enc.AES(myKey));
 }

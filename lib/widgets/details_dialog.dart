@@ -12,7 +12,7 @@ class DetailsDialog {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Container(
-                  height: 350.0,
+                  height: 400.0,
                   width: 300.0,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

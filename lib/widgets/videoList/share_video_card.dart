@@ -19,6 +19,9 @@ import '../dialog_box.dart';
 import '../show_custom_snackbar.dart';
 import 'card_field.dart';
 import 'package:string_extensions/string_extensions.dart';
+import 'package:encrypt/encrypt.dart' as enc;
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:encrypt/encrypt.dart';
 
 class ShareVideoCard extends StatefulWidget {
   final ShareVideo _shareVideo;
@@ -34,18 +37,11 @@ class _ShareVideoCardState extends State<ShareVideoCard>
     with SingleTickerProviderStateMixin {
   final _auth = FirebaseAuth.instance;
   late AnimationController controller;
-  bool isLoading = false;
   bool isDownloading = false;
-  String? size;
 
   @override
   void initState() {
     // TODO: implement initState
-    SchedulerBinding.instance
-        ?.addPostFrameCallback((_) => _buildCheckAnimation(context));
-    getSize();
-    checkUrl(context);
-
     super.initState();
 
     controller =
@@ -67,8 +63,7 @@ class _ShareVideoCardState extends State<ShareVideoCard>
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true
-        ? CardField(
+    return CardField(
             textName:
                 "${widget._shareVideo.videoName}${FirebaseApi.getExtension(widget._shareVideo.videoUrl)}",
             downloadFunction: () async {
@@ -82,9 +77,11 @@ class _ShareVideoCardState extends State<ShareVideoCard>
                   widget._shareVideo.videoOwner.toString(),
                   widget._shareVideo.videoName.toString(),
                   widget._shareVideo.videoDes.toString(),
-                  widget._shareVideo.videoUrl.toString());
+                  widget._shareVideo.videoUrl.toString(),
+                  widget._shareVideo.videoKey.toString(),
+                  widget._shareVideo.videoSize.toString());
 
-              print(Provider.of<ShareData>(context, listen: false).vName);
+              print(Provider.of<ShareData>(context, listen: false).vKey);
               print(widget._shareVideo.videoUrl);
               print(widget._shareVideo.videoDes);
             },
@@ -102,15 +99,26 @@ class _ShareVideoCardState extends State<ShareVideoCard>
                   widget._shareVideo.videoName.capitalize,
                   FirebaseApi.getExtension(widget._shareVideo.videoUrl),
                   widget._shareVideo.videoDes.capitalize,
-                  size);
+                  widget._shareVideo.videoSize.toString());
             },
-          )
-        : Container();
+          );
   }
 
   Future downloadShareVideo(context) async {
+    print(widget._shareVideo.videoKey);
+
+    final keyT = encrypt.Key.fromUtf8('my 32 length key................');
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(AES(keyT));
+
+    final decrypted = encrypter.decrypt(
+        enc.Encrypted.fromBase64(widget._shareVideo.videoKey.toString()),
+        iv: iv);
+    Encryption.plainText = decrypted;
+    print(decrypted);
     _buildDownloadAnimation(context);
     Directory d = await getExternalVisibleDir;
+    print(widget._shareVideo.videoKey);
     await FirebaseApi.getNormalFile(
         d, widget._shareVideo.videoUrl, widget._shareVideo.videoName);
     setState(() {
@@ -152,75 +160,7 @@ class _ShareVideoCardState extends State<ShareVideoCard>
             ),
           ));
 
-  Future checkUrl(BuildContext context) async {
-    final response =
-        await http.get(Uri.parse(widget._shareVideo.videoUrl.toString()));
-    if (response.statusCode == 200) {
-      setState(() {
-        isLoading = true;
-      });
-    } else {
-      User? user = _auth.currentUser;
-      final uid = user!.uid;
 
-      CollectionReference _collectionRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('share');
-
-      // Get docs from collection reference
-      QuerySnapshot querySnapshot = await _collectionRef.get();
-
-      var vId = querySnapshot.docs[widget.index].reference.id.toString();
-
-      // delete the document
-
-      var data = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('share');
-      data.doc(vId).delete();
-      String? msg =
-          '${widget._shareVideo.videoName.capitalize}${FirebaseApi.getExtension(widget._shareVideo.videoUrl)} is deleted by owner';
-      CustomSnackBar.showCustomSnackBar(context, msg);
-      Navigator.pop(context);
-      print(vId);
-    }
-    if (isLoading == true) {
-      Navigator.pop(context);
-    }
-  }
-
-  void _buildCheckAnimation(context) {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        barrierColor: Colors.transparent,
-        builder: (context) {
-          return Dialog(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 250.h,
-                  width: 250.w,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Lottie.network(
-                        'https://assets8.lottiefiles.com/packages/lf20_qdf5azlf.json',
-                        repeat: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-  }
 
   Future deleteVideo(index, context) async {
     User? user = _auth.currentUser;
@@ -292,14 +232,4 @@ class _ShareVideoCardState extends State<ShareVideoCard>
     }
   }
 
-  Future<void> getSize() async {
-    http.Response r =
-        await http.get(Uri.parse(widget._shareVideo.videoUrl.toString()));
-    var file_size = r.headers["content-length"];
-    var s = int.parse(file_size!) / 1000000;
-
-    setState(() {
-      size = s.toStringAsFixed(2).toString();
-    });
-  }
 }

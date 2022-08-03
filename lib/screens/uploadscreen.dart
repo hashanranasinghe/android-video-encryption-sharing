@@ -1,15 +1,17 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:app/api/Validator.dart';
-import 'package:app/models/create_account.dart';
 import 'package:app/models/upload_video.dart';
 import 'package:app/widgets/drawer_widget.dart';
 import 'package:app/widgets/topscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:encrypt/encrypt.dart' as enc;
+import 'package:encrypt/encrypt.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Key;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
@@ -19,7 +21,7 @@ import '../widgets/constants.dart';
 import '../widgets/input_field.dart';
 
 class UploadScreen extends StatefulWidget {
-  const UploadScreen({Key? key}) : super(key: key);
+  const UploadScreen() : super();
   static const routeName = 'UploadScreen screen';
 
   @override
@@ -31,8 +33,6 @@ class _UploadScreenState extends State<UploadScreen> {
   UploadTask? task;
   File? file;
   Uint8List? bytes;
-  String? _videoName;
-  String? _description;
   var Result;
   final _form = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -43,6 +43,10 @@ class _UploadScreenState extends State<UploadScreen> {
   final userCollection = FirebaseFirestore.instance.collection('users');
   String? detailName;
   String? detailEmail;
+  String? plainText;
+  String? encKey;
+  String? decKey;
+  String? size;
 
   TextEditingController videoNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -161,7 +165,14 @@ class _UploadScreenState extends State<UploadScreen> {
                           EdgeInsets.symmetric(vertical: 5.h, horizontal: 40.w),
                       child: TextButton(
                           onPressed: () {
+
+                            setState(() {
+                              plainText = generateRandomString(16);
+                              Encryption.plainText = plainText;
+                            });
+                            encryptKey();
                             uploadFile(context);
+
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
@@ -292,11 +303,16 @@ class _UploadScreenState extends State<UploadScreen> {
 
     final path = result.files.single.path!;
     setState(() => file = File(path));
+    int? sizeInBytes = file?.lengthSync();
+    double sizeInMb = sizeInBytes! / 1000000;
+    print(sizeInMb.toStringAsFixed(2));
     final p = result.files.first.bytes;
     setState(() {
       bytes = p;
+      size = sizeInMb.toStringAsFixed(2);
     });
   }
+
 
   //upload the video
   Future uploadFile(context) async {
@@ -329,7 +345,6 @@ class _UploadScreenState extends State<UploadScreen> {
               msg: "Complete", toastLength: Toast.LENGTH_LONG);
         });
         final urlDownload = await snapshot.ref.getDownloadURL();
-        CreateAccDetails createAccDetails = CreateAccDetails();
 
         User? user = _auth.currentUser;
         print(user!.uid);
@@ -351,6 +366,8 @@ class _UploadScreenState extends State<UploadScreen> {
     UploadVideo uploadVideo = UploadVideo();
 
     //writing all values
+    uploadVideo.videoSize = size;
+    uploadVideo.videoKey = encKey;
     uploadVideo.videoOwner = detailName;
     uploadVideo.videoName = videoNameController.text;
     uploadVideo.videoDes = descriptionController.text;
@@ -391,5 +408,27 @@ class _UploadScreenState extends State<UploadScreen> {
       detailEmail = email;
     });
     return [userName, email];
+  }
+
+  String generateRandomString(int len) {
+    var r = Random();
+    return String.fromCharCodes(
+        List.generate(len, (index) => r.nextInt(33) + 89));
+  }
+
+  String encryptKey() {
+    final key = Key.fromUtf8('my 32 length key................');
+    final iv = IV.fromLength(16);
+    final encrypter = Encrypter(AES(key));
+    final encrypted = encrypter.encrypt(plainText!, iv: iv);
+    setState(() {
+      encKey = encrypted.base64;
+    });
+    final decrypted =
+        encrypter.decrypt(enc.Encrypted.fromBase64(encKey!), iv: iv);
+    setState(() {
+      decKey = decrypted;
+    });
+    return encrypted.base64;
   }
 }

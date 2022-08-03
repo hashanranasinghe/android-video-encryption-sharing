@@ -32,7 +32,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ListTileField(
                   function: () {
                     Provider.of<ShareData>(context, listen: false)
-                        .sharingData('', '', '', '');
+                        .sharingData('', '', '', '', '','');
                     Navigator.of(context)
                         .pushReplacementNamed(UploadScreen.routeName);
                   },
@@ -41,7 +41,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ListTileField(
                   function: () {
                     Provider.of<ShareData>(context, listen: false)
-                        .sharingData('', '', '', '');
+                        .sharingData('', '', '', '', '','');
                     Navigator.of(context)
                         .pushReplacementNamed(VideoListScreen.routeName);
                   },
@@ -50,7 +50,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ListTileField(
                   function: () {
                     Provider.of<ShareData>(context, listen: false)
-                        .sharingData('', '', '', '');
+                        .sharingData('', '', '', '', '','');
                     Navigator.of(context)
                         .pushReplacementNamed(ShareVideoListScreen.routeName);
                   },
@@ -59,7 +59,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ListTileField(
                   function: () {
                     Provider.of<ShareData>(context, listen: false)
-                        .sharingData('', '', '', '');
+                        .sharingData('', '', '', '', '','');
                     Navigator.of(context)
                         .pushNamed(ContactListScreen.routeName);
                   },
