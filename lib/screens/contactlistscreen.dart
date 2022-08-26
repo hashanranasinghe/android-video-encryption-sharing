@@ -1,4 +1,5 @@
 import 'package:app/models/favorite_contact.dart';
+import 'package:app/models/invitatecontact.dart';
 import 'package:app/widgets/constants.dart';
 import 'package:app/widgets/contact_list_field.dart';
 import 'package:app/widgets/dialog_box.dart';
@@ -30,7 +31,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getUsersContactList();
+    getCurrentUser();
     getEmail();
   }
 
@@ -47,6 +48,11 @@ class _ContactListScreenState extends State<ContactListScreen> {
   String? id;
   String? cid;
   final _auth = FirebaseAuth.instance;
+
+  final userCollection = FirebaseFirestore.instance.collection('users');
+  String? detailName;
+  String? detailEmail;
+  bool isDataLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -103,11 +109,12 @@ class _ContactListScreenState extends State<ContactListScreen> {
                   return Visibility(
                       child: (finalEmail != data['email'])
                           ? ContactListTileField(
+                        email: data['email'].toString(),
                               text: data['userName'].toString(),
                               iconData: Icons.add_circle_outline_rounded,
                               function: () {
                                 DialogBox.dialogBox(
-                                    "Do you really want to add ${data['userName'].toString()} to my contacts?",
+                                    "Do you really want to send a invitation to ${data['userName'].toString()} ?",
                                     context, () {
                                   print(data['uid'].toString());
                                   print(data['userName'].toString());
@@ -115,8 +122,10 @@ class _ContactListScreenState extends State<ContactListScreen> {
 
                                   User? user = _auth.currentUser;
                                   print(user!.uid);
-                                  favoriteContact(
+                                  inviteContact(
                                       data['uid'].toString(),
+                                      detailName,
+                                      detailEmail,
                                       data['userName'].toString(),
                                       data['email'].toString());
                                 });
@@ -131,50 +140,42 @@ class _ContactListScreenState extends State<ContactListScreen> {
     );
   }
 
-  Future getUsersContactList() async {
+  Future getCurrentUser() async {
     User? user = _auth.currentUser;
     final uid = user!.uid;
-    var data = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('contacts')
-        .snapshots();
-
-    CollectionReference _collectionRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('contacts');
-
-    // Get docs from collection reference
-    QuerySnapshot querySnapshot = await _collectionRef.get();
-
-    // Get data from docs and convert map to List
-    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-
-    print(allData);
+    DocumentSnapshot documentSnapshot = await userCollection.doc(uid).get();
+    String userName = documentSnapshot.get('userName');
+    String email = documentSnapshot.get('email');
     setState(() {
-      contact = allData;
+      detailName = userName;
+      detailEmail = email;
+      isDataLoading = true;
     });
-
-    var c = allData.contains('test2');
-    print(c);
+    print(detailEmail);
+    print(detailName);
+    return [userName, email];
   }
 
-  Future<String> favoriteContact(uid, contactName, contactEmail) async {
+  Future<String> inviteContact(uid,senderName,senderEmail, contactName, contactEmail) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     CollectionReference users = firebaseFirestore.collection('users');
-    FavoriteContact favoriteContact = FavoriteContact();
+    InviteContact inviteContact = InviteContact();
     User? user = _auth.currentUser;
 
     //writing all values
-    favoriteContact.contactName = contactName;
-    favoriteContact.contactEmail = contactEmail;
-    favoriteContact.uid = uid;
+    inviteContact.senderUid=user!.uid;
+    inviteContact.senderName = senderName;
+    inviteContact.senderEmail= senderEmail;
+    inviteContact.inviteContactName = contactName;
+    inviteContact.inviteContactEmail = contactEmail;
+    inviteContact.uid = uid;
 
-    users.doc(user!.uid).collection('contacts').add(favoriteContact.toMap());
-    Fluttertoast.showToast(msg: "Added favorite successfully.");
+    users.doc(uid).collection('invitations').add(inviteContact.toMap());
+    Fluttertoast.showToast(msg: "Sent invitation successfully.");
     return "success";
   }
+
+
 
   Widget _buildSearchBar() {
     return CupertinoSearchTextField(

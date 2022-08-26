@@ -292,20 +292,15 @@ class _SignupScreenState extends State<SignupScreen> {
   postDetailsToFileStore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
-
     CreateAccDetails createAccDetails = CreateAccDetails();
-
     //writing all values
     createAccDetails.userName = usernameController.text;
     createAccDetails.email = user!.email;
     createAccDetails.uid = user.uid;
-
     firebaseFirestore
         .collection("users")
         .doc(user.uid)
         .set(createAccDetails.toMap());
-
-    //Fluttertoast.showToast(msg: "Account created successfully.");
     Navigator.of(context)
         .pushReplacementNamed(VerificationEmailScreen.routeName);
   }

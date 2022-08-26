@@ -107,6 +107,7 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                                   return Visibility(
                                       child: ContactListTileField(
                                           text: data['contactName'].toString(),
+                                          email: data['contactEmail'].toString(),
                                           iconData: Icons.delete,
                                           function: () async {
                                             DialogBox.dialogBox(
@@ -136,6 +137,7 @@ class _FavoriteContactListScreenState extends State<FavoriteContactListScreen> {
                                       child: ContactListTileField(
                                           iconData: Icons.upload_rounded,
                                           text: data['contactName'].toString(),
+                                          email: data['contactEmail'].toString(),
                                           function: () {
                                             DialogBox.dialogBox(
                                                 'Do you really want to share ${video.vName.capitalize}${FirebaseApi.getExtension(video.vUrl)} to ${data['contactName'].toString()}?',

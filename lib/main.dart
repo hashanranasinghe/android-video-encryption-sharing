@@ -1,15 +1,18 @@
 import 'package:app/screens/contactlistscreen.dart';
 import 'package:app/screens/favoritecontactlistscreen.dart';
+import 'package:app/screens/fingerprintscreen.dart';
 import 'package:app/screens/forgetpasswordscreen.dart';
+import 'package:app/screens/invitationscreen.dart';
 import 'package:app/screens/loginscreen.dart';
 import 'package:app/screens/profilescreen.dart';
+import 'package:app/screens/settingsscreen.dart';
 import 'package:app/screens/sharevideolistscreen.dart';
 import 'package:app/screens/signupscreen.dart';
 import 'package:app/screens/splashscreen.dart';
 import 'package:app/screens/uploadscreen.dart';
 import 'package:app/screens/videolistscreen.dart';
-import 'package:firebase_core/firebase_core.dart';import 'package:app/screens/verificationscreen.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:app/screens/verificationscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) => MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(fontFamily: 'InriaSans'),
-          home: const SplashScreen(),
+          home: FingerprintPage(),
           builder: (context, widget) {
             return MediaQuery(
               //Setting font does not change with system font size
@@ -68,7 +71,9 @@ class MyApp extends StatelessWidget {
             ProfileScreen.routeName: (ctx) => const ProfileScreen(),
             VerificationEmailScreen.routeName: (ctx) =>
                 const VerificationEmailScreen(),
-            ForgetPasswordScreen.routeName: (ctx) => ForgetPasswordScreen()
+            ForgetPasswordScreen.routeName: (ctx) => ForgetPasswordScreen(),
+            InvitationScreen.routeName: (ctx) => InvitationScreen(),
+            SettingsScreen.routeName: (ctx) => SettingsScreen()
           },
         ),
       ),

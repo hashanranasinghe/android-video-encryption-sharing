@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'constants.dart';
@@ -8,7 +9,7 @@ class DetailsDialog {
           barrierDismissible: false,
           context: context,
           builder: (context) => Dialog(
-                backgroundColor: kPrimaryColor,
+                backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Container(
@@ -27,7 +28,7 @@ class DetailsDialog {
                               'Details',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: kPrimaryColor,
                                   fontSize: 20.sp),
                             )
                           ],
@@ -39,7 +40,7 @@ class DetailsDialog {
                             'Video Name: ${vName}${vEx}',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: kPrimaryColor,
                                 fontSize: 20.sp),
                           )),
                       Padding(
@@ -48,7 +49,7 @@ class DetailsDialog {
                           'Video Description: ${vDes}',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: kPrimaryColor,
                               fontSize: 20.sp),
                         ),
                       ),
@@ -59,7 +60,7 @@ class DetailsDialog {
                                 'Video Owner: ${vOwner}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: kPrimaryColor,
                                     fontSize: 20.sp),
                               ),
                             )
@@ -70,7 +71,7 @@ class DetailsDialog {
                           'Video Size: ${vSize}MB',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: kPrimaryColor,
                               fontSize: 20.sp),
                         ),
                       ),
@@ -90,7 +91,7 @@ class DetailsDialog {
                                   'Cancel',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFFEFEFEF),
+                                      color: kPrimaryColor,
                                       fontSize: 20.sp),
                                 )),
                           ],

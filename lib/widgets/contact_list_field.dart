@@ -5,6 +5,7 @@ import 'package:string_extensions/string_extensions.dart';
 
 class ContactListTileField extends StatelessWidget {
   final String? text;
+  final String? email;
   final Function function;
   final IconData iconData;
 
@@ -12,7 +13,7 @@ class ContactListTileField extends StatelessWidget {
       {Key? key,
       required this.text,
       required this.function,
-      required this.iconData})
+      required this.iconData, this.email})
       : super(key: key);
 
   @override
@@ -33,6 +34,13 @@ class ContactListTileField extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20.sp,
+                      ),
+                    ),
+                    subtitle: Text(
+                     email!,
+                      style: TextStyle(
+
+                        fontSize: 15.sp,
                       ),
                     ),
                     trailing: Icon(

@@ -26,7 +26,9 @@ class CardField extends StatelessWidget {
       child: Card(
         elevation: 8,
         shadowColor: kPrimaryLightColor,
-        color: kPrimaryColor,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)),
         child: Padding(
           padding: EdgeInsets.all(20.r),
           child: Column(
@@ -40,7 +42,7 @@ class CardField extends StatelessWidget {
                       textName.capitalize!,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: kPrimaryColor,
                           fontSize: 20.sp),
                     ),
                   ),
@@ -52,7 +54,7 @@ class CardField extends StatelessWidget {
                           },
                           icon: const Icon(
                             Icons.details_rounded,
-                            color: Colors.white,
+                            color: kPrimaryColor,
                             size: 30,
                           )),
                       IconButton(
@@ -61,7 +63,7 @@ class CardField extends StatelessWidget {
                           },
                           icon: const Icon(
                             Icons.share_rounded,
-                            color: Colors.white,
+                            color: kPrimaryColor,
                             size: 30,
                           )),
                       IconButton(
@@ -70,7 +72,7 @@ class CardField extends StatelessWidget {
                         },
                         icon: const Icon(
                           Icons.download_rounded,
-                          color: Colors.white,
+                          color: kPrimaryColor,
                           size: 30,
                         ),
                       ),
@@ -80,7 +82,7 @@ class CardField extends StatelessWidget {
                         },
                         icon: const Icon(
                           Icons.delete_rounded,
-                          color: Colors.white,
+                          color: kPrimaryColor,
                           size: 30,
                         ),
                       ),

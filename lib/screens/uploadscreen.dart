@@ -165,14 +165,12 @@ class _UploadScreenState extends State<UploadScreen> {
                           EdgeInsets.symmetric(vertical: 5.h, horizontal: 40.w),
                       child: TextButton(
                           onPressed: () {
-
                             setState(() {
                               plainText = generateRandomString(16);
                               Encryption.plainText = plainText;
                             });
                             encryptKey();
                             uploadFile(context);
-
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
@@ -312,7 +310,6 @@ class _UploadScreenState extends State<UploadScreen> {
       size = sizeInMb.toStringAsFixed(2);
     });
   }
-
 
   //upload the video
   Future uploadFile(context) async {
